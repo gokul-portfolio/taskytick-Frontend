@@ -1,0 +1,26 @@
+/* Extra large desktop */
+@media screen and (max-width: 16000px) {}
+
+/* Large desktops */
+@media screen and (max-width: 1440px) {}
+
+/* Laptops */
+@media screen and (max-width: 1199px) {}
+
+/* Tablets (landscape) */
+@media screen and (max-width: 991px) {}
+
+/* Tablets (portrait) */
+@media screen and (max-width: 767px) {}
+
+/* Large mobiles */
+@media screen and (max-width: 575px) {}
+
+/* Medium mobiles */
+@media screen and (max-width: 425px) {}
+
+/* Small mobiles */
+@media screen and (max-width: 375px) {}
+
+/* Extra small mobiles */
+@media screen and (max-width: 320px) {}
