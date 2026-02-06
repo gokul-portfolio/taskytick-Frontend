@@ -3,7 +3,7 @@ import React from 'react'
 const TaskPage = () => {
   return (
     <div>
-      task 
+      task
     </div>
   )
 }

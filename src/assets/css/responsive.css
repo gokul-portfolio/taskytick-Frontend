@@ -8,16 +8,137 @@
 @media screen and (max-width: 1199px) {}
 
 /* Tablets (landscape) */
-@media screen and (max-width: 991px) {}
+@media screen and (max-width: 991px) {
+    .mobile-menu {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
 
-/* Tablets (portrait) */
-@media screen and (max-width: 767px) {}
+    .menu-parent::before {
+        left: 7px;
+        width: 2px;
+        height: 15px;
+    }
+
+    .sidebar-menu li {
+        gap: 8px;
+        padding: 10px 6px;
+        font-size: 13px;
+    }
+
+    .menu-parent {
+        padding-left: 10px !important;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .top-bar-left {
+        width: 100%;
+    }
+
+    .top-bar-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .top-bar-left h1 {
+        font-size: 18px;
+    }
+
+    .welcome-card img {
+        width: 110px;
+    }
+    .side-card{
+        margin-top: 10px !important;
+    }
+
+}
+
+@media screen and (max-width: 767px) {
+    .login-card {
+        flex-direction: column;
+    }
+
+    .login-left {
+        min-height: 220px;
+    }
+
+    .container-fluid {
+        max-width: 100%;
+    }
+
+    .dropdown-btn {
+        width: 140px;
+        height: 38px;
+        font-size: 12px !important;
+        padding: 0px 10px !important;
+    }
+
+
+
+}
 
 /* Large mobiles */
-@media screen and (max-width: 575px) {}
+@media screen and (max-width: 575px) {
+    .menu-parent::before {
+        display: none;
+    }
 
-/* Medium mobiles */
-@media screen and (max-width: 425px) {}
+    .logo-img {
+        height: 35px;
+    }
+
+    .app-footer p {
+        font-size: 14px;
+    }
+
+    .login-right {
+        position: relative;
+        padding: 20px 15px
+    }
+
+    .login-footer-note {
+        margin-top: 15px;
+    }
+
+    .top-bar-right {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .filter-wrapper {
+        width: 100%;
+    }
+
+    .dropdown-btn {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .task-card {
+        padding: 15px 13px;
+    }
+
+    .main-wrap {
+        padding: 10px 2px;
+    }
+
+}
+
+@media screen and (max-width: 425px) {
+    .login-left-overlay {
+        padding: 20px 10px;
+    }
+
+    .login-right h1 {
+        font-size: 20px;
+    }
+}
 
 /* Small mobiles */
 @media screen and (max-width: 375px) {}

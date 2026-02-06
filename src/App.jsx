@@ -1,16 +1,28 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import React, { useState } from "react";
+import Calendar from "react-calendar";
+// Layouts
+import AdminLayout from "./components/layout/AdminLayout";
+import UserLayout from "./components/layout/UserLayout";
 
-import MainLayout from "./components/layout/MainLayout";
-
-// Lazy pages
+// Public pages
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
-const DashboardPage = lazy(() => import("./pages/DashboardPage"));
-const TaskPage = lazy(() => import("./pages/TaskPage"));
-const CreateTaskPage = lazy(() => import("./pages/CreateTaskPage"));
-const EditTaskPage = lazy(() => import("./pages/EditTaskPage"));
-const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+
+// Admin pages
+const AdminDashboard = lazy(() => import("./pages/admin/DashboardPage"));
+const TaskPage = lazy(() => import("./pages/admin/TaskPage"));
+const CreateTaskPage = lazy(() => import("./pages/admin/CreateTaskPage"));
+const EditTaskPage = lazy(() => import("./pages/admin/EditTaskPage"));
+const AdminProfile = lazy(() => import("./pages/admin/ProfilePage"));
+
+// User pages
+const UserDashboard = lazy(() => import("./pages/user/DashboardPage"));
+const MyTasksPage = lazy(() => import("./pages/user/MyTasksPage"));
+const UserProfile = lazy(() => import("./pages/user/ProfilePage"));
+
+// Common
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 
 function App() {
@@ -18,20 +30,27 @@ function App() {
     <Suspense fallback={<div className="loader">Loading...</div>}>
       <Routes>
 
-        {/* PUBLIC PAGES (no layout if you want) */}
+        {/* ================= PUBLIC ================= */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* MAIN LAYOUT PAGES */}
-        <Route element={<MainLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="/tasks" element={<TaskPage />} />
+        {/* ================= ADMIN ================= */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="tasks" element={<TaskPage />} />
           <Route path="task/create" element={<CreateTaskPage />} />
           <Route path="task/edit/:id" element={<EditTaskPage />} />
-          <Route path="profile" element={<ProfilePage />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
 
-        {/* 404 */}
+        {/* ================= USER ================= */}
+        <Route path="/user" element={<UserLayout />}>
+          <Route index element={<UserDashboard />} />
+          <Route path="tasks" element={<MyTasksPage />} />
+          <Route path="profile" element={<UserProfile />} />
+        </Route>
+
+        {/* ================= 404 ================= */}
         <Route path="*" element={<PageNotFound />} />
 
       </Routes>

@@ -5,7 +5,7 @@ import { HashRouter } from "react-router-dom";
 /* custom css */
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import "react-calendar/dist/Calendar.css";
 import "./assets/css/style.css";
 import "./assets/css/responsive.css";
 
