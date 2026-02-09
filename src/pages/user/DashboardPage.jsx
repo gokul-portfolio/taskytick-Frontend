@@ -68,20 +68,6 @@ const DashboardPage = () => {
               onClick={() => navigate("/tasks/create")}
             />
 
-            <IconButton
-              icon={<FiBell size={18} />}
-              title="Notifications"
-              onClick={handleNotification}
-            />
-
-            <img
-              src="https://i.pravatar.cc/40"
-              alt="profile"
-              className="profile-img rounded-circle"
-              width={40}
-              height={40}
-            />
-
           </div>
         </div>
 
@@ -136,7 +122,7 @@ const DashboardPage = () => {
           {/* RIGHT */}
           <Col lg={4} className="d-flex">
             <Card className="side-card w-100 h-100 p-3">
-              <h6 className="mb-3">Today</h6>
+              <h1  className="main-head mb-3">Today</h1>
 
               <div className="calendar-wrapper">
                 <Calendar
@@ -157,7 +143,7 @@ const DashboardPage = () => {
             <Card className="important-notes-card p-3 w-100 h-100">
 
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="mb-0">Important Notes</h5>
+                <h1 className="main-head mb-3">Important Notes</h1>
 
                 <span
                   className="view-all-btn"
@@ -178,6 +164,22 @@ const DashboardPage = () => {
                   </div>
                 </div>
 
+                <div className="note-item">
+                  <div className="note-dot medium"></div>
+                  <div className="note-content">
+                    <h6>Update login API</h6>
+                    <p>Fix token expiration issue</p>
+                    <span className="note-time">10 min ago</span>
+                  </div>
+                </div>
+                <div className="note-item">
+                  <div className="note-dot medium"></div>
+                  <div className="note-content">
+                    <h6>Update login API</h6>
+                    <p>Fix token expiration issue</p>
+                    <span className="note-time">10 min ago</span>
+                  </div>
+                </div>
                 <div className="note-item">
                   <div className="note-dot medium"></div>
                   <div className="note-content">
@@ -245,9 +247,9 @@ const DashboardPage = () => {
 
         {/* ================= HIGH PRIORITY TASKS ================= */}
         <div className="mt-5">
-          <h5 className="section-title mb-3">
-            🔥 Today – High Priority Tasks
-          </h5>
+          <h1 className="main-head mb-3">
+            Today – High Priority Tasks
+          </h1>
 
           <Row>
             {highPriorityTasks.map((task, index) => (

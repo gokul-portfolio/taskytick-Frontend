@@ -19,7 +19,6 @@
 /* ===============================
    Root Variables
 ================================ */
-
 :root {
 
     --color-primary: #003428;
@@ -116,7 +115,37 @@ ol {
 }
 
 /* ========================================= common style ================================*/
+/* ========main title style =======*/
+.main-head {
+    position: relative;
+    font-size: 22px !important;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.4px;
+    line-height: 1.3;
+    display: inline-block;
+    padding-left: 14px;
+}
 
+.main-head::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 4px;
+    height: 70%;
+    background-color: var(--color-secondary);
+    border-radius: 10px;
+}
+
+
+.main-head:hover::after {
+    width: calc(100% - 14px);
+}
+
+/*================= main button=======================*/
 .custom-btn {
     position: relative;
     overflow: hidden;
@@ -139,6 +168,7 @@ ol {
 .custom-btn span {
     position: relative;
     z-index: 2;
+    padding: 0px 4px;
 }
 
 .custom-btn::after {
@@ -172,82 +202,73 @@ ol {
     background: #003428;
 }
 
-
+/* ==================main icon button ============*/
 .icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-  border: none;
-  border-radius: 50%;
-  background: transparent;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
 
-  cursor: pointer;
-  transition: all 0.25s ease;
+    cursor: pointer;
+    transition: all 0.25s ease;
 }
 
-/* SIZES */
 .icon-btn-sm {
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
 }
 
 .icon-btn-md {
-  width: 38px;
-  height: 38px;
-  font-size: 16px;
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
 }
 
 .icon-btn-lg {
-  width: 44px;
-  height: 44px;
-  font-size: 18px;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
 }
 
-/* VARIANTS */
 .icon-btn-default {
-  color: var(--color-text);
+    color: var(--color-text);
 }
 
 .icon-btn-default:hover {
-  background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .icon-btn-primary {
-  color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .icon-btn-primary:hover {
-  background: rgba(0, 52, 40, 0.12);
+    background: rgba(0, 52, 40, 0.12);
 }
 
 .icon-btn-danger {
-  color: #dc2626;
+    color: #dc2626;
 }
 
 .icon-btn-danger:hover {
-  background: rgba(220, 38, 38, 0.12);
+    background: rgba(220, 38, 38, 0.12);
 }
 
-/* DISABLED */
 .icon-btn.disabled,
 .icon-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-
-
-
-
 /* ==============dropdown btn==================== */
-/* ================= WRAPPER ================= */
 .dropdown-btn-wrapper {
     position: relative;
 }
 
-/* ================= BUTTON ================= */
 .dropdown-btn {
     width: 160px;
     height: 42px;
@@ -271,7 +292,6 @@ ol {
         background-color 0.2s ease;
 }
 
-/* Hover / focus */
 .dropdown-btn:hover {
     border-color: #CB7A21;
     background-color: #fffaf5;
@@ -282,27 +302,23 @@ ol {
     box-shadow: 0 0 0 3px rgba(203, 122, 33, 0.15);
 }
 
-/* ================= LABEL + ICON ================= */
 .dropdown-btn-label {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* LEFT ICON */
 .dropdown-btn-icon {
     font-size: 14px;
     color: #9ca3af;
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* Icon hover reaction */
 .dropdown-btn:hover .dropdown-btn-icon {
     color: #CB7A21;
     transform: scale(1.05);
 }
 
-/* ================= ARROW ================= */
 .dropdown-arrow {
     font-size: 12px;
     color: #9ca3af;
@@ -317,7 +333,6 @@ ol {
     color: #CB7A21;
 }
 
-/* ================= DROPDOWN MENU ================= */
 .dropdown-menu-custom {
     position: absolute;
     top: 48px;
@@ -346,7 +361,6 @@ ol {
     color: #CB7A21;
 }
 
-/* ================= ANIMATION ================= */
 @keyframes dropdownFade {
     from {
         opacity: 0;
@@ -361,8 +375,7 @@ ol {
 
 
 
-
-
+/* ============sidebar========== */
 .app-wrapper {
     display: flex;
     min-height: 100vh;
@@ -385,7 +398,6 @@ ol {
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
     border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
-
 
 .sidebar.open {
     width: 240px;
@@ -410,7 +422,6 @@ ol {
     margin: 20px 0;
     flex: 1;
 }
-
 
 .sidebar-menu li:hover {
     background-color: rgba(203, 122, 33, 0.12);
@@ -437,6 +448,8 @@ ol {
     color: var(--color-secondary);
 }
 
+
+
 .content-area {
     flex: 1;
     display: flex;
@@ -453,7 +466,7 @@ ol {
     color: var(--color-text);
 }
 
-
+/* ================== header navbar=============== */
 .nav-header-wrap {
     height: 64px;
     background: var(--bg-color);
@@ -653,23 +666,8 @@ ol {
     position: relative;
     font-weight: 600;
     color: var(--color-primary);
-    /* padding-left: 26px !important; */
 
 }
-
-/* 
-.menu-parent::before {
-    content: "";
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 18px;
-    background-color: var(--color-secondary);
-    border-radius: 4px;
-} */
-
 
 .menu-parent.clickable {
     cursor: pointer;
@@ -782,7 +780,6 @@ ol {
     line-height: 1;
 }
 
-/* Profile name beside icon */
 .profile-wrap {
     gap: 6px;
     padding: 0 10px;
@@ -1298,19 +1295,20 @@ ol {
     font-weight: 700;
     color: var(--color-primary);
     margin-bottom: 2px;
+    padding-left: 15px;
 }
 
 .top-bar-left h1::after {
     content: "";
-    display: block;
-    width: 40px;
-    height: 2px;
-    margin-top: 6px;
-    border-radius: 6px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
 
-    background: linear-gradient(to right,
-            #003428,
-            #1f7a5a);
+    width: 4px;
+    height: 70%;
+    background-color: var(--color-secondary);
+    border-radius: 10px;
 }
 
 .top-bar-left span {
@@ -1470,9 +1468,7 @@ ol {
     font-weight: 700;
 }
 
-
-
-/* dashboard */
+/*===================== dashboard============= */
 .dashboard-top {
     display: flex;
     justify-content: space-between;
@@ -1620,7 +1616,6 @@ ol {
     border-radius: 4px;
 }
 
-/* CALENDAR */
 .calendar-box {
     margin-top: 20px;
     text-align: center;
@@ -1778,15 +1773,12 @@ ol {
     opacity: 1;
 }
 
-/* IMPORTANT NOTES CARD */
 .important-notes-card {
     border-radius: 18px;
     border: none;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
-
-/* VIEW ALL BUTTON */
 .view-all-btn {
     font-size: 14px;
     color: var(--color-secondary);
@@ -1794,26 +1786,36 @@ ol {
     font-weight: 500;
 }
 
-
-/* NOTES LIST */
 .notes-list {
     display: flex;
     flex-direction: column;
     gap: 14px;
+
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 6px;
 }
 
+.notes-list::-webkit-scrollbar {
+    width: 6px;
+}
 
-/* SINGLE NOTE */
+.notes-list::-webkit-scrollbar-thumb {
+    background-color: #CB7A21;
+    border-radius: 10px;
+}
+
+.notes-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 .note-item {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     border-bottom: 1ox solid rgb(228, 228, 228);
-
-
     padding: 10px;
     border-radius: 12px;
-
     transition: 0.3s;
     cursor: pointer;
 }
@@ -1822,8 +1824,6 @@ ol {
     background: rgba(0, 153, 255, 0.05);
 }
 
-
-/* DOT */
 .note-dot {
     width: 10px;
     height: 10px;
@@ -1843,8 +1843,6 @@ ol {
     background: #52c41a;
 }
 
-
-/* NOTE CONTENT */
 .note-content h6 {
     font-size: 15px;
     margin-bottom: 2px;
@@ -1898,3 +1896,355 @@ ol {
 .search-box input {
     border-radius: 10px;
 }
+
+.dashboard-section .container-fluid {
+    width: 100%;
+    max-width: 100%;
+}
+
+.dashboard-content-wrap {
+    margin-top: 20px;
+}
+
+
+/* ================== main form design =================== */
+.main-parent-form {
+    position: relative;
+    padding: 24px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 52, 40, 0.18);
+    transition: border-color 0.3s ease;
+    overflow: hidden;
+}
+
+.main-parent-form::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background:
+        radial-gradient(circle at top left,
+            rgba(203, 122, 33, 0.12),
+            transparent 45%),
+        radial-gradient(circle at bottom right,
+            rgba(0, 52, 40, 0.12),
+            transparent 45%);
+    opacity: 0.6;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.main-parent-form::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(203, 122, 33, 0.08);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.main-parent-form:focus-within {
+    border-color: var(--color-secondary);
+}
+
+.main-parent-form:focus-within::before {
+    opacity: 1;
+}
+
+.main-parent-form:focus-within::after {
+    opacity: 1;
+    box-shadow:
+        inset 0 0 0 1px rgba(203, 122, 33, 0.18),
+        0 0 0 3px rgba(203, 122, 33, 0.12);
+}
+
+
+
+.main-text-area {
+    position: relative;
+}
+
+.input-label {
+    font-weight: 500;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.label-icon {
+    color: var(--color-secondary);
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.required-star {
+    color: #dc2626;
+    margin-left: 2px;
+}
+
+.textarea-control {
+    border-radius: 12px;
+    border: 1px solid rgba(0, 52, 40, 0.25);
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 0.25s ease;
+}
+
+.textarea-control:hover {
+    border-color: var(--color-hover);
+}
+
+.textarea-control:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(203, 122, 33, 0.18);
+    outline: none;
+}
+
+.textarea-control:disabled {
+    background-color: #f8fafc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.main-select-input {
+    position: relative;
+}
+
+.input-label {
+    font-weight: 500;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.label-icon {
+    color: var(--color-secondary);
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.required-star {
+    color: #dc2626;
+    margin-left: 2px;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 52, 40, 0.25);
+    padding: 10px 40px 10px 12px;
+    font-size: 14px;
+    background-color: #ffffff;
+    transition: all 0.25s ease;
+}
+
+.select-control:hover {
+    border-color: var(--color-hover);
+}
+
+.select-control:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(203, 122, 33, 0.18);
+    outline: none;
+}
+
+.select-control:disabled {
+    background-color: #f8fafc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.main-checkbox-input {
+    position: relative;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-wrapper input {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 2px solid rgba(0, 52, 40, 0.4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    background: #fff;
+}
+
+.checkbox-custom::after {
+    content: "";
+    width: 6px;
+    height: 10px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.2s ease;
+}
+
+.checkbox-wrapper input:checked+.checkbox-custom {
+    background: var(--color-secondary);
+    border-color: var(--color-secondary);
+}
+
+.checkbox-wrapper input:checked+.checkbox-custom::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.checkbox-label .label-icon {
+    color: var(--color-secondary);
+    font-size: 16px;
+}
+
+.checkbox-wrapper:hover .checkbox-custom {
+    border-color: var(--color-secondary);
+}
+
+.checkbox-wrapper input:focus-visible+.checkbox-custom {
+    box-shadow: 0 0 0 3px rgba(203, 122, 33, 0.25);
+}
+
+.main-text-input {
+    position: relative;
+}
+
+.input-label {
+    font-weight: 500;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.label-icon {
+    color: var(--color-secondary);
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.required-star {
+    color: #dc2626;
+    margin-left: 2px;
+}
+
+.input-control {
+    border-radius: 8px;
+    border: 1px solid rgba(0, 52, 40, 0.25);
+    padding: 10px 12px;
+    font-size: 14px;
+    transition: all 0.25s ease;
+    color: #0f172a;
+}
+
+.input-control:hover {
+    border-color: var(--color-hover);
+}
+
+.input-control:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(203, 122, 33, 0.2);
+    outline: none;
+}
+
+.input-control:disabled {
+    background-color: #f8fafc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+
+.highlight-notes {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.highlight-notes-box {
+    text-align: center;
+    background: #f9fafb;
+    border: 1px dashed var(--color-secondary);
+    border-radius: 12px;
+    padding: 24px 28px;
+    transition: all 0.25s ease;
+}
+
+.highlight-notes-box:hover {
+    border-color: var(--color-hover);
+    background: #fff;
+}
+
+.highlight-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(203, 122, 33, 0.12);
+    /* secondary soft bg */
+    color: var(--color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 22px;
+    margin: 0 auto 12px;
+}
+
+.highlight-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 6px;
+}
+
+.highlight-text {
+    font-size: 13px;
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.project-table{
+    overflow: hidden;
+    overflow-x: scroll;
+}
+
+
+

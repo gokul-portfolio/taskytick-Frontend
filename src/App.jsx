@@ -5,6 +5,9 @@ import Calendar from "react-calendar";
 // Layouts
 import AdminLayout from "./components/layout/AdminLayout";
 import UserLayout from "./components/layout/UserLayout";
+import CreateUserPage from "./pages/admin/CreateUserPage";
+import CreateProjectPage from "./pages/admin/CreateProjectPage";
+import ProjectPage from "./pages/admin/projectpage";
 
 // Public pages
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -16,6 +19,7 @@ const TaskPage = lazy(() => import("./pages/admin/TaskPage"));
 const CreateTaskPage = lazy(() => import("./pages/admin/CreateTaskPage"));
 const EditTaskPage = lazy(() => import("./pages/admin/EditTaskPage"));
 const AdminProfile = lazy(() => import("./pages/admin/ProfilePage"));
+const ViewUserPage = lazy(() => import("./pages/admin/ViewUserPage"));
 
 // User pages
 const UserDashboard = lazy(() => import("./pages/user/DashboardPage"));
@@ -41,6 +45,10 @@ function App() {
           <Route path="task/create" element={<CreateTaskPage />} />
           <Route path="task/edit/:id" element={<EditTaskPage />} />
           <Route path="profile" element={<AdminProfile />} />
+          <Route path="createuser" element={<CreateUserPage />} />
+          <Route path="createproject" element={<CreateProjectPage />} />
+          <Route path="project" element={<ProjectPage />} />
+          <Route path="viewuser" element={<ViewUserPage />} />
         </Route>
 
         {/* ================= USER ================= */}

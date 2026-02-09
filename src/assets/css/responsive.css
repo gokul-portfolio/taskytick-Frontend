@@ -2,10 +2,39 @@
 @media screen and (max-width: 16000px) {}
 
 /* Large desktops */
-@media screen and (max-width: 1440px) {}
+@media screen and (max-width: 1440px) {
+    .welcome-card img {
+        width: 120px;
+    }
+
+    .welcome-img {
+        position: absolute;
+        left: 82%;
+        top: 21%;
+    }
+
+
+    .project-table-wrapper {
+        overflow: hidden !important;
+        overflow-y: auto !important;
+    }
+}
+
+
+
 
 /* Laptops */
-@media screen and (max-width: 1199px) {}
+@media screen and (max-width: 1199px) {
+
+    .welcome-card,
+    .side-card {
+        height: 75%;
+    }
+
+    .welcome-card img {
+        width: 80px;
+    }
+}
 
 /* Tablets (landscape) */
 @media screen and (max-width: 991px) {
@@ -52,8 +81,18 @@
     .welcome-card img {
         width: 110px;
     }
-    .side-card{
+
+    .side-card {
         margin-top: 10px !important;
+    }
+
+    .welcome-card,
+    .side-card {
+        height: 100%;
+    }
+
+    .welcome-card h1 {
+        font-size: 25px;
     }
 
 }
@@ -78,6 +117,26 @@
         padding: 0px 10px !important;
     }
 
+    .welcome-card img {
+        width: 65px;
+    }
+
+    .welcome-img {
+        position: absolute;
+        left: 84%;
+        top: 12%;
+    }
+
+    .welcome-actions span {
+        display: flex;
+        gap: 2px;
+        padding: 5px 14px;
+        font-size: 12px;
+    }
+
+    .welcome-card p {
+        font-size: 13px;
+    }
 
 
 }
@@ -128,6 +187,11 @@
         padding: 10px 2px;
     }
 
+    .custom-btn {
+        padding: 6px 27px;
+        font-size: 12px;
+        border-radius: 10px;
+    }
 }
 
 @media screen and (max-width: 425px) {

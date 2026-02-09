@@ -5,11 +5,11 @@ const Button = ({
   onClick,
   type = "button",
 
-  variant = "primary",     // primary | secondary | outline | danger
-  size = "md",             // sm | md | lg
+  variant = "primary",    
+  size = "md",             
 
-  icon = null,             // optional icon
-  iconPosition = "left",   // left | right
+  icon = null,             
+  iconPosition = "left",   
 
   disabled = false,
 }) => {
