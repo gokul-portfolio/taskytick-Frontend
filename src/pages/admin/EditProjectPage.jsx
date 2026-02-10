@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 
+/* Reusable Inputs */
 import TextInput from "../../components/form/TextInput";
 import TextArea from "../../components/form/TextArea";
 import SelectInput from "../../components/form/SelectInput";
 import CheckboxInput from "../../components/form/CheckboxInput";
 
-
+/* Icons */
 import {
   FiFolder,
   FiFileText,
@@ -15,12 +16,13 @@ import {
   FiFlag,
   FiCheckCircle,
   FiRefreshCcw,
+  FiInfo,
 } from "react-icons/fi";
 
-
+/* Button */
 import Button from "../../components/common/Button";
 
-const CreateProjectPage = () => {
+const EditProjectPage = () => {
   const [projectData, setProjectData] = useState({
     projectName: "",
     description: "",
@@ -38,6 +40,27 @@ const CreateProjectPage = () => {
     { value: "2", label: "Arun Kumar" },
   ];
 
+  /* =========================
+     LOAD EXISTING PROJECT
+     (Mock data – replace with API)
+  ========================== */
+  useEffect(() => {
+    const existingProject = {
+      projectName: "Website Revamp",
+      description: "Full redesign and performance optimization",
+      clientName: "ABC Pvt Ltd",
+      projectManager: "1",
+      priority: "high",
+      startDate: "2026-01-10",
+      endDate: "2026-03-15",
+      status: "active",
+      isBillable: true,
+    };
+
+    setProjectData(existingProject);
+  }, []);
+
+  /* HANDLE INPUT CHANGE */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setProjectData((prev) => ({
@@ -46,29 +69,28 @@ const CreateProjectPage = () => {
     }));
   };
 
+  /* SUBMIT */
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Create Project Payload:", projectData);
+    console.log("Update Project Payload:", projectData);
   };
 
   return (
-
     <section>
-
       <Container fluid>
 
         {/* HEADER */}
         <div className="mb-4">
-          <h4 className="main-head">Create New Project</h4> <br />
+          <h4 className="main-head">Edit Project</h4><br />
           <small className="text-muted">
-            Admin can create and manage projects
+            Update project details and settings
           </small>
         </div>
 
         <Form onSubmit={handleSubmit} className="main-parent-form">
-
           <Row>
 
+            {/* LEFT SIDE */}
             <Col lg={8}>
               <TextInput
                 label="Project Name"
@@ -98,11 +120,10 @@ const CreateProjectPage = () => {
                 placeholder="Enter client name"
                 icon={<FiUsers />}
               />
-
             </Col>
 
+            {/* RIGHT SIDE */}
             <Col lg={4}>
-            
               <SelectInput
                 label="Project Manager"
                 name="projectManager"
@@ -165,28 +186,41 @@ const CreateProjectPage = () => {
 
           </Row>
 
+          {/* ACTION BUTTONS */}
           <div className="d-flex justify-content-center align-items-center gap-2">
             <Button
               type="submit"
-              label="Create Project"
+              label="Update Project"
               icon={<FiCheckCircle />}
             />
 
             <Button
               type="reset"
-              label="Reset Form"
+              label="Reset Changes"
               variant="secondary"
               icon={<FiRefreshCcw />}
             />
           </div>
-
         </Form>
 
+        {/* NOTES */}
+        <div className="highlight-notes mt-3">
+          <div className="highlight-notes-box">
+            <span className="highlight-icon">
+              <FiInfo />
+            </span>
+
+            <h6 className="highlight-title">Important Notes</h6>
+
+            <p className="highlight-text">
+              Changing project status or dates may affect timelines and billing.
+            </p>
+          </div>
+        </div>
+
       </Container>
-
     </section>
-
   );
 };
 
-export default CreateProjectPage;
+export default EditProjectPage;

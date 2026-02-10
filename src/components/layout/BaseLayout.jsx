@@ -14,23 +14,23 @@ const BaseLayout = ({ role }) => {
     <div className={`dashboard-layout ${role}-layout`}>
       <div className="app-wrapper">
         {/* SIDEBAR */}
-         {/* <Sidebar
+          <Sidebar
           isOpen={isOpen}
           toggleSidebar={toggleSidebar}
           role={role}
-        />   */}
+        />    
 
         <div
           className={`content-area ${isOpen ? "sidebar-open" : "sidebar-closed"
             }`}
         >
-           {/* <Header toggleSidebar={toggleSidebar} role={role} /> */}
+            {/* <Header toggleSidebar={toggleSidebar} role={role} />  */}
 
           <main className="main-wrap">
             <Outlet />
           </main>
 
-          {/* <Footer />  */}
+         {/* <Footer />  */}
         </div>
       </div>
     </div>

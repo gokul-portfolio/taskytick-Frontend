@@ -60,7 +60,7 @@ const CreateUserPage = () => {
 
           {/* HEADER */}
           <div className="mb-4">
-            <h4 className="main-head">Create New User</h4>
+            <h4 className="main-head">Create New User</h4><br />
             <small className="text-muted">
               Admin can create and manage team members
             </small>

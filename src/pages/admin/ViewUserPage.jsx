@@ -1,95 +1,144 @@
-import React, { useState } from "react";
-import { Container, Table, Badge } from "react-bootstrap";
-import IconButton from "../../components/common/IconButton";
+import React from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import UserCard from "../../components/common/UserCard";
 
-const UserPage = () => {
-  const [users] = useState([
-    {
-      id: 1,
-      name: "Arun Kumar",
-      email: "arun@mail.com",
-      role: "Team Lead",
-      department: "Technology",
-      status: "active",
-    }
-  ]);
+const ViewUserPage = () => {
 
-  const getStatusBadge = (status) =>
-    status === "active" ? (
-      <Badge bg="success">Active</Badge>
-    ) : (
-      <Badge bg="secondary">Inactive</Badge>
-    );
+  const usersByDesignation = {
+    Designer: [
+      {
+        id: 1,
+        name: "Arun Kumar",
+        email: "arun@company.com",
+        designation: "UI/UX Designer",
+        joinedDate: "12 Jan 2025",
+        status: "Active",
+        statusClass: "active",
+        team: "Designer",
+      },
+      {
+        id: 2,
+        name: "Priya S",
+        email: "priya@company.com",
+        designation: "Visual Designer",
+        joinedDate: "20 Feb 2025",
+        status: "Active",
+        statusClass: "active",
+        team: "Designer",
+      },
+      {
+        id: 3,
+        name: "Karthik R",
+        email: "karthik@company.com",
+        designation: "Product Designer",
+        joinedDate: "05 Dec 2024",
+        status: "Inactive",
+        statusClass: "inactive",
+        team: "Designer",
+      },
+    ],
+
+    Developer: [
+      {
+        id: 4,
+        name: "Ravi Shankar",
+        email: "ravi@company.com",
+        designation: "Full Stack Developer",
+        joinedDate: "05 Mar 2024",
+        status: "Active",
+        statusClass: "active",
+        team: "Developer",
+      },
+      {
+        id: 5,
+        name: "Ajith Kumar",
+        email: "ajith@company.com",
+        designation: "Backend Developer",
+        joinedDate: "18 Jun 2024",
+        status: "Active",
+        statusClass: "active",
+        team: "Developer",
+      },
+      {
+        id: 6,
+        name: "Suresh M",
+        email: "suresh@company.com",
+        designation: "Frontend Developer",
+        joinedDate: "10 Nov 2024",
+        status: "Inactive",
+        statusClass: "inactive",
+        team: "Developer",
+      },
+    ],
+
+    SEO: [
+      {
+        id: 7,
+        name: "Divya S",
+        email: "divya@company.com",
+        designation: "SEO Specialist",
+        joinedDate: "18 Aug 2024",
+        status: "Active",
+        statusClass: "active",
+        team: "SEO",
+      },
+      {
+        id: 8,
+        name: "Meena R",
+        email: "meena@company.com",
+        designation: "Content Strategist",
+        joinedDate: "01 Dec 2024",
+        status: "Active",
+        statusClass: "active",
+        team: "SEO",
+      },
+      {
+        id: 9,
+        name: "Prakash V",
+        email: "prakash@company.com",
+        designation: "SEO Analyst",
+        joinedDate: "22 Jan 2025",
+        status: "Inactive",
+        statusClass: "inactive",
+        team: "SEO",
+      },
+    ],
+  };
 
   return (
     <section>
-      <div className="inner-view-user">
+      <div className="inner-user">
+
         <Container fluid>
 
-          {/* USER TABLE */}
-          <div className="project-table-wrapper">
-            <Table className="project-table align-middle">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Department</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+          {Object.entries(usersByDesignation).map(
+            ([designation, users]) =>
+              Array.isArray(users) && users.length > 0 && (
+                <div key={designation} className="team-section">
 
-              <tbody>
-                {users.map((user, index) => (
-                  <tr key={user.id}>
-                    <td>{index + 1}</td>
+                  <h3 className="main-head mt-5 mb-3">
+                    {designation} Team
+                  </h3>
 
-                    <td>
-                      <div className="d-flex align-items-center gap-2">
-                        <span className="user-avatar">
-                          <i className="bi bi-person-fill" />
-                        </span>
-                        <strong>{user.name}</strong>
-                      </div>
-                    </td>
+                  <Row className="g-4">
+                    {users.map((user) =>
+                      user ? (
+                        <Col key={user.id} xl={4} lg={4} md={6} sm={12}>
+                          <UserCard user={user} />
+                        </Col>
+                      ) : null
+                    )}
+                  </Row>
 
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                    <td>{user.department}</td>
-                    <td>{getStatusBadge(user.status)}</td>
-
-                    {/* ACTIONS */}
-                    <td>
-                      <div className="d-flex gap-2">
-                        <IconButton
-                          icon={<i className="bi bi-eye" />}
-                          variant="primary"
-                          size="sm"
-                          title="View User"
-                          onClick={() => console.log("View user", user.id)}
-                        />
-
-                        <IconButton
-                          icon={<i className="bi bi-eye" />}
-                          variant="primary"
-                          size="sm"
-                          title="View User"
-                        />
-                      </div>
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
+                </div>
+              )
+          )}
 
         </Container>
       </div>
+
     </section>
   );
 };
 
-export default UserPage;
+export default ViewUserPage;

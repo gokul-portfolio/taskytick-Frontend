@@ -1,6 +1,6 @@
+import { NavLink } from "react-router-dom";
 import {
   FaTachometerAlt,
-  FaCalendarAlt,
   FaTasks,
   FaClipboardList,
   FaPlusCircle,
@@ -9,13 +9,39 @@ import {
   FaSignOutAlt,
   FaChevronLeft,
   FaChevronRight,
-  FaStickyNote,
-  FaRegStickyNote,
+  FaBell,
+  FaUsers,
+  FaProjectDiagram,
 } from "react-icons/fa";
 
+/* ================= MENU CONFIG ================= */
+
+const adminMenu = [
+  { label: "Dashboard", path: "/admin", icon: FaTachometerAlt, end: true },
+  { label: "Users", path: "/admin/users", icon: FaUsers },
+  { label: "Create User", path: "/admin/users/create", icon: FaPlusCircle },
+  { label: "Tasks", path: "/admin/tasks", icon: FaClipboardList },
+  { label: "Create Task", path: "/admin/tasks/create", icon: FaPlusCircle },
+  { label: "Projects", path: "/admin/projects", icon: FaProjectDiagram },
+  { label: "Create Project", path: "/admin/projects/create", icon: FaPlusCircle },
+  { label: "Profile", path: "/admin/profile", icon: FaCog },
+];
+
+const userMenu = [
+  { label: "Dashboard", path: "/user", icon: FaTachometerAlt, end: true },
+  { label: "My Tasks", path: "/user/tasks", icon: FaTasks },
+  { label: "Notifications", path: "/user/notifications", icon: FaBell },
+  { label: "Profile", path: "/user/profile", icon: FaUserCircle },
+];
+
+/* ================= SIDEBAR ================= */
+
 const Sidebar = ({ isOpen, toggleSidebar, role = "user" }) => {
+  const menuItems = role === "admin" ? adminMenu : userMenu;
+
   return (
     <aside className={`sidebar ${isOpen ? "open" : "closed"}`}>
+
       {/* HEADER */}
       <div className="sidebar-header">
         {isOpen && <h3 className="brand-name">Tasktick</h3>}
@@ -24,74 +50,26 @@ const Sidebar = ({ isOpen, toggleSidebar, role = "user" }) => {
         </button>
       </div>
 
+      {/* MENU */}
       <ul className="sidebar-menu">
+        {menuItems.map((item, index) => {
+          const Icon = item.icon;
 
-        {/* ================= ADMIN ================= */}
-        {role === "admin" && (
-          <>
-            <li className="menu-parent">
-              <FaTachometerAlt className="menu-icon" />
-              {isOpen && <span>Dashboard</span>}
+          return (
+            <li key={index}>
+              <NavLink
+                to={item.path}
+                end={item.end}
+                className={({ isActive }) =>
+                  `menu-parent ${isActive ? "active" : ""}`
+                }
+              >
+                <Icon className="menu-icon" />
+                {isOpen && <span>{item.label}</span>}
+              </NavLink>
             </li>
-
-            <li className="menu-parent">
-              <FaClipboardList className="menu-icon" />
-              {isOpen && <span>All Tasks</span>}
-            </li>
-
-            <li className="menu-parent">
-              <FaPlusCircle className="menu-icon" />
-              {isOpen && <span>Create Task</span>}
-            </li>
-
-            <li className="menu-parent">
-              <FaCalendarAlt className="menu-icon" />
-              {isOpen && <span>Schedule</span>}
-            </li>
-
-            <li className="menu-parent">
-              <FaCog className="menu-icon" />
-              {isOpen && <span>Settings</span>}
-            </li>
-          </>
-        )}
-
-        {/* ================= USER ================= */}
-        {role === "user" && (
-          <>
-            <li className="menu-parent">
-              <FaTachometerAlt className="menu-icon" />
-              {isOpen && <span>Dashboard</span>}
-            </li>
-
-            <li className="menu-parent">
-              <FaTasks className="menu-icon" />
-              {isOpen && <span>My Tasks</span>}
-            </li>
-
-            <li className="menu-parent">
-              <FaCalendarAlt className="menu-icon" />
-              {isOpen && <span>Calendar</span>}
-            </li>
-
-            {/* NOTES */}
-            <li className="menu-parent">
-              <FaStickyNote className="menu-icon" />
-              {isOpen && <span>Create Note</span>}
-            </li>
-
-            <li className="menu-parent">
-              <FaRegStickyNote className="menu-icon" />
-              {isOpen && <span>My Notes</span>}
-            </li>
-          </>
-        )}
-
-        {/* ================= COMMON ================= */}
-        <li className="menu-parent">
-          <FaUserCircle className="menu-icon" />
-          {isOpen && <span>Profile</span>}
-        </li>
+          );
+        })}
       </ul>
 
       {/* FOOTER */}
@@ -99,6 +77,7 @@ const Sidebar = ({ isOpen, toggleSidebar, role = "user" }) => {
         <FaSignOutAlt />
         {isOpen && <span>Logout</span>}
       </div>
+
     </aside>
   );
 };

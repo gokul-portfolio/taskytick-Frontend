@@ -12,12 +12,6 @@
         left: 82%;
         top: 21%;
     }
-
-
-    .project-table-wrapper {
-        overflow: hidden !important;
-        overflow-y: auto !important;
-    }
 }
 
 
@@ -95,6 +89,9 @@
         font-size: 25px;
     }
 
+    .project-table {
+        min-width:750px !important;
+    }
 }
 
 @media screen and (max-width: 767px) {
@@ -106,9 +103,10 @@
         min-height: 220px;
     }
 
+    /* 
     .container-fluid {
         max-width: 100%;
-    }
+    } */
 
     .dropdown-btn {
         width: 140px;
@@ -137,7 +135,6 @@
     .welcome-card p {
         font-size: 13px;
     }
-
 
 }
 
