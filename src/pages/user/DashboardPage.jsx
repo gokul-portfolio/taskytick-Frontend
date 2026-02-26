@@ -63,7 +63,7 @@ const DashboardPage = () => {
           <div className="d-flex align-items-center gap-3">
 
             <Button
-              label="Add Task"
+              label="Add Notes"
               icon={<FiPlus />}
               onClick={() => navigate("/tasks/create")}
             />

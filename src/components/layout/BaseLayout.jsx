@@ -24,13 +24,13 @@ const BaseLayout = ({ role }) => {
           className={`content-area ${isOpen ? "sidebar-open" : "sidebar-closed"
             }`}
         >
-            {/* <Header toggleSidebar={toggleSidebar} role={role} />  */}
+            <Header toggleSidebar={toggleSidebar} role={role} /> 
 
           <main className="main-wrap">
             <Outlet />
           </main>
 
-         {/* <Footer />  */}
+         <Footer /> 
         </div>
       </div>
     </div>

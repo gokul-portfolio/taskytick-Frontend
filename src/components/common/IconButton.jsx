@@ -4,9 +4,9 @@ const IconButton = ({
   icon,
   onClick,
   type = "button",
-  variant = "default",   // default | primary | danger
-  size = "md",           // sm | md | lg
-  title = "",            // tooltip
+  variant = "default",
+  size = "md",           
+  title = "",            
   disabled = false,
 }) => {
   return (

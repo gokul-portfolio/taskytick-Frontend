@@ -399,39 +399,31 @@ ol {
     overflow-y: auto;
     color: var(--color-text);
 }
+
 .dashboard-layout {
     overflow: visible !important;
 }
 
 .sidebar {
     position: sticky !important;
-    top: 10px !important; 
-
+    top: 10px !important;
     height: 100vh;
     width: 260px;
     flex-shrink: 0;
-
     display: flex;
     flex-direction: column;
-
     background-color: var(--bg-color);
     color: var(--color-text);
-
     background-image: url("../images/home/sidebar-bg.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-
     overflow: hidden;
-
     transition: width 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
     border-right: 1px solid rgba(0, 0, 0, 0.08);
-
     z-index: 100;
 }
-
-
 
 .sidebar.open {
     width: 240px;
@@ -487,6 +479,7 @@ ol {
 .nav-header-wrap {
     height: 64px;
     background: var(--bg-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .header-inner {
@@ -871,7 +864,6 @@ ol {
     box-shadow: 0 8px 18px rgba(203, 122, 33, 0.35);
 }
 
-
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -897,7 +889,6 @@ ol {
         transform: translateY(0);
     }
 }
-
 
 /* =========================login page==========================  */
 .login-wrapper {
@@ -1273,7 +1264,6 @@ ol {
     padding: 20px 22px;
     background: #ffffff;
     border-radius: 16px;
-
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
     overflow: visible;
 }
@@ -1285,7 +1275,6 @@ ol {
     left: 0;
     width: 100%;
     height: 3px;
-
     background: linear-gradient(to right,
             transparent,
             rgba(203, 122, 33, 0.7),

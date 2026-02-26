@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   Navbar,
   Container,
@@ -6,14 +7,15 @@ import {
   FormControl,
   Offcanvas,
 } from "react-bootstrap";
+
 import {
   FaBars,
   FaBell,
   FaUserCircle,
   FaSearch,
 } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
 
+import { FaUser } from "react-icons/fa";
 
 import tasktick from "../../assets/images/tasktick.webp";
 
@@ -28,7 +30,7 @@ const Header = () => {
         <Container fluid className="header-inner">
           <div className="header-left">
             <Navbar.Brand className="logo-wrap">
-              {/* <img src={tasktick} className="logo-img" alt="Logo" /> */}
+              <img src={tasktick} className="logo-img" alt="Logo" />
             </Navbar.Brand>
           </div>
 
@@ -90,3 +92,4 @@ const Header = () => {
 };
 
 export default Header;
+

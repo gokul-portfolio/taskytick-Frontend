@@ -28,7 +28,7 @@ const Button = ({
       {icon && iconPosition === "left" && (
         <span className="btn-icon">{icon}</span>
       )}
-
+      
       <span className="btn-text">{label}</span>
 
       {icon && iconPosition === "right" && (
