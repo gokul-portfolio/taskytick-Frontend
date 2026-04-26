@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen, toggleSidebar, role = 'user' }) => {
   const handleLogout = () => {
     // clear token / session
     localStorage.removeItem('token')
-    window.location.href = '/login'
+    window.location.href = 'login'
   }
 
   return (

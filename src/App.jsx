@@ -14,19 +14,19 @@ import CreateProjectPage from './pages/admin/CreateProjectPage'
 import EditProjectPage from './pages/admin/EditProjectPage'
 import EditUserPage from './pages/admin/EditUserPage'
 import RolesAndPermissions from './pages/admin/RolesAndPermissions'
-import ViewProject from './pages/admin/ViewProject'
 
-/* Lazy loaded ADMIN */
+/* Lazy ADMIN */
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const AdminDashboard = lazy(() => import('./pages/admin/DashboardPage'))
-const TaskPage = lazy(() => import('./pages/admin/TaskPage'))
+const ViewTaskPage = lazy(() => import('./pages/admin/ViewTaskPage'))
 const CreateTaskPage = lazy(() => import('./pages/admin/CreateTaskPage'))
 const EditTaskPage = lazy(() => import('./pages/admin/EditTaskPage'))
 const AdminProfile = lazy(() => import('./pages/admin/ProfilePage'))
 const ViewUserPage = lazy(() => import('./pages/admin/ViewUserPage'))
 const ViewProjectPage = lazy(() => import('./pages/admin/ViewProjectPage'))
+const ViewProject = lazy(() => import('./pages/admin/ViewProjectPage')) // optional reuse
 
-/* ================= USER PAGES ================= */
+/* ================= USER ================= */
 import UserNotifications from './pages/user/UserNotifications'
 
 const UserDashboard = lazy(() => import('./pages/user/DashboardPage'))
@@ -36,14 +36,15 @@ const UserProfile = lazy(() => import('./pages/user/ProfilePage'))
 /* ================= COMMON ================= */
 const PageNotFound = lazy(() => import('./pages/PageNotFound'))
 
-function App () {
+function App() {
   return (
     <Suspense fallback={<div className='loader'>Loading...</div>}>
       <Routes>
-        {/* ================= PUBLIC ================= */}
+
+        {/* PUBLIC */}
         <Route path='/login' element={<LoginPage />} />
 
-        {/* ================= ADMIN ================= */}
+        {/* ADMIN */}
         <Route
           path='/admin'
           element={
@@ -61,13 +62,10 @@ function App () {
           <Route path='users' element={<ViewUserPage />} />
           <Route path='users/create' element={<CreateUserPage />} />
           <Route path='users/edit/:id' element={<EditUserPage />} />
-          <Route
-            path='users/roles-permissions'
-            element={<RolesAndPermissions />}
-          />
+          <Route path='users/roles-permissions' element={<RolesAndPermissions />} />
 
           {/* TASKS */}
-          <Route path='tasks' element={<TaskPage />} />
+          <Route path='tasks' element={<ViewTaskPage />} />
           <Route path='tasks/create' element={<CreateTaskPage />} />
           <Route path='tasks/edit/:id' element={<EditTaskPage />} />
 
@@ -78,7 +76,7 @@ function App () {
           <Route path='projects/view/:id' element={<ViewProject />} />
         </Route>
 
-        {/* ================= USER ================= */}
+        {/* USER */}
         <Route
           path='/user'
           element={
@@ -93,8 +91,9 @@ function App () {
           <Route path='notifications' element={<UserNotifications />} />
         </Route>
 
-        {/* ================= 404 ================= */}
+        {/* 404 */}
         <Route path='*' element={<PageNotFound />} />
+
       </Routes>
     </Suspense>
   )

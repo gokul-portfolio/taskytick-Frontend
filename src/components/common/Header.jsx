@@ -83,7 +83,7 @@ const Header = () => {
             <li>My Tasks</li>
             <li>Notifications</li>
             <li>Settings</li>
-            <li className="logout">Logout</li>
+            <li className="">Logout</li>
           </ul>
         </Offcanvas.Body>
       </Offcanvas>

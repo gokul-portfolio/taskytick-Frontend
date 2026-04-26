@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
+import { useUser } from "../../context/UserContext";
+import { useParams, useNavigate } from "react-router-dom";
 
-/* Reusable Inputs */
 import TextInput from "../../components/form/TextInput";
 import TextArea from "../../components/form/TextArea";
 import SelectInput from "../../components/form/SelectInput";
 import CheckboxInput from "../../components/form/CheckboxInput";
 
-/* Icons */
 import {
   FiFolder,
   FiFileText,
@@ -16,88 +16,117 @@ import {
   FiFlag,
   FiCheckCircle,
   FiRefreshCcw,
-  FiInfo,
 } from "react-icons/fi";
 
-/* Button */
 import Button from "../../components/common/Button";
 
 const EditProjectPage = () => {
+  const { id } = useParams(); // 🔥 GET ID
+  const navigate = useNavigate();
+
+  const {
+    updateProject,
+    getProjectById,
+    users,
+    fetchUsers,
+  } = useUser();
+
   const [projectData, setProjectData] = useState({
-    projectName: "",
+    name: "",
     description: "",
     clientName: "",
     projectManager: "",
-    priority: "medium",
+    priority: "Medium",
     startDate: "",
     endDate: "",
-    status: "active",
-    isBillable: true,
+    status: "Active",
+    billable: true,
   });
 
-  const managers = [
-    { value: "1", label: "Ravi Kumar" },
-    { value: "2", label: "Arun Kumar" },
-  ];
-
-  /* =========================
-     LOAD EXISTING PROJECT
-     (Mock data – replace with API)
-  ========================== */
+  // 🔥 Load users + project data
   useEffect(() => {
-    const existingProject = {
-      projectName: "Website Revamp",
-      description: "Full redesign and performance optimization",
-      clientName: "ABC Pvt Ltd",
-      projectManager: "1",
-      priority: "high",
-      startDate: "2026-01-10",
-      endDate: "2026-03-15",
-      status: "active",
-      isBillable: true,
+    fetchUsers();
+
+    const fetchProject = async () => {
+      const data = await getProjectById(id);
+
+      setProjectData({
+        name: data.name || "",
+        description: data.description || "",
+        clientName: data.clientName || "",
+        projectManager: data.projectManager?._id || "",
+        priority: data.priority || "Medium",
+        startDate: data.startDate?.slice(0, 10) || "",
+        endDate: data.endDate?.slice(0, 10) || "",
+        status: data.status || "Active",
+        billable: data.billable ?? true,
+      });
     };
 
-    setProjectData(existingProject);
-  }, []);
+    fetchProject();
+  }, [id]);
 
-  /* HANDLE INPUT CHANGE */
+  // 🔥 Managers filter
+  const managers = users
+    .filter((user) => user.role === "admin" || user.role === "manager")
+    .map((user) => ({
+      value: user._id,
+      label: user.name,
+    }));
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setProjectData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : name === "priority"
+          ? value.charAt(0).toUpperCase() + value.slice(1)
+          : name === "status"
+          ? value === "on-hold"
+            ? "Inactive"
+            : value.charAt(0).toUpperCase() + value.slice(1)
+          : value,
     }));
   };
 
-  /* SUBMIT */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Update Project Payload:", projectData);
+
+    try {
+      await updateProject(id, projectData);
+
+      alert("✅ Project Updated Successfully");
+
+      navigate("/admin/projects"); // 🔥 redirect
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error updating project");
+    }
   };
 
   return (
     <section>
       <Container fluid>
 
-        {/* HEADER */}
         <div className="mb-4">
-          <h4 className="main-head">Edit Project</h4><br />
+          <h4 className="main-head">Edit Project</h4>
           <small className="text-muted">
-            Update project details and settings
+            Update project details
           </small>
         </div>
 
         <Form onSubmit={handleSubmit} className="main-parent-form">
           <Row>
 
-            {/* LEFT SIDE */}
             <Col lg={8}>
               <TextInput
                 label="Project Name"
-                name="projectName"
-                value={projectData.projectName}
+                name="name"
+                value={projectData.name}
                 onChange={handleChange}
-                placeholder="Enter project name"
                 required
                 icon={<FiFolder />}
               />
@@ -108,7 +137,6 @@ const EditProjectPage = () => {
                 value={projectData.description}
                 onChange={handleChange}
                 rows={6}
-                placeholder="Describe project scope"
                 icon={<FiFileText />}
               />
 
@@ -117,28 +145,24 @@ const EditProjectPage = () => {
                 name="clientName"
                 value={projectData.clientName}
                 onChange={handleChange}
-                placeholder="Enter client name"
                 icon={<FiUsers />}
               />
             </Col>
 
-            {/* RIGHT SIDE */}
             <Col lg={4}>
               <SelectInput
                 label="Project Manager"
                 name="projectManager"
                 value={projectData.projectManager}
                 onChange={handleChange}
-                icon={<FiUsers />}
                 options={managers}
               />
 
               <SelectInput
                 label="Priority"
                 name="priority"
-                value={projectData.priority}
+                value={projectData.priority.toLowerCase()}
                 onChange={handleChange}
-                icon={<FiFlag />}
                 options={[
                   { value: "low", label: "Low" },
                   { value: "medium", label: "Medium" },
@@ -167,7 +191,7 @@ const EditProjectPage = () => {
               <SelectInput
                 label="Status"
                 name="status"
-                value={projectData.status}
+                value={projectData.status.toLowerCase()}
                 onChange={handleChange}
                 options={[
                   { value: "active", label: "Active" },
@@ -178,16 +202,15 @@ const EditProjectPage = () => {
 
               <CheckboxInput
                 label="Billable Project"
-                name="isBillable"
-                checked={projectData.isBillable}
+                name="billable"
+                checked={projectData.billable}
                 onChange={handleChange}
               />
             </Col>
 
           </Row>
 
-          {/* ACTION BUTTONS */}
-          <div className="d-flex justify-content-center align-items-center gap-2">
+          <div className="d-flex justify-content-center gap-2">
             <Button
               type="submit"
               label="Update Project"
@@ -195,28 +218,15 @@ const EditProjectPage = () => {
             />
 
             <Button
-              type="reset"
-              label="Reset Changes"
+              type="button"
+              label="Cancel"
               variant="secondary"
               icon={<FiRefreshCcw />}
+              onClick={() => navigate("/projects")}
             />
           </div>
+
         </Form>
-
-        {/* NOTES */}
-        <div className="highlight-notes mt-3">
-          <div className="highlight-notes-box">
-            <span className="highlight-icon">
-              <FiInfo />
-            </span>
-
-            <h6 className="highlight-title">Important Notes</h6>
-
-            <p className="highlight-text">
-              Changing project status or dates may affect timelines and billing.
-            </p>
-          </div>
-        </div>
 
       </Container>
     </section>

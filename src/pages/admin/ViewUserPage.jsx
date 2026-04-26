@@ -1,144 +1,104 @@
-import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import UserCard from "../../components/common/UserCard";
+import React, { useMemo } from 'react'
+import { Container, Row, Col, Spinner } from 'react-bootstrap'
+import UserCard from '../../components/common/UserCard'
+import { useUser } from '../../context/UserContext'
 
 const ViewUserPage = () => {
 
-  const usersByDesignation = {
-    Designer: [
-      {
-        id: 1,
-        name: "Arun Kumar",
-        email: "arun@company.com",
-        designation: "UI/UX Designer",
-        joinedDate: "12 Jan 2025",
-        status: "Active",
-        statusClass: "active",
-        team: "Designer",
-      },
-      {
-        id: 2,
-        name: "Priya S",
-        email: "priya@company.com",
-        designation: "Visual Designer",
-        joinedDate: "20 Feb 2025",
-        status: "Active",
-        statusClass: "active",
-        team: "Designer",
-      },
-      {
-        id: 3,
-        name: "Karthik R",
-        email: "karthik@company.com",
-        designation: "Product Designer",
-        joinedDate: "05 Dec 2024",
-        status: "Inactive",
-        statusClass: "inactive",
-        team: "Designer",
-      },
-    ],
+  // DIRECT FROM CONTEXT
+  const { users, loading, deleteUser } = useUser()
 
-    Developer: [
-      {
-        id: 4,
-        name: "Ravi Shankar",
-        email: "ravi@company.com",
-        designation: "Full Stack Developer",
-        joinedDate: "05 Mar 2024",
-        status: "Active",
-        statusClass: "active",
-        team: "Developer",
-      },
-      {
-        id: 5,
-        name: "Ajith Kumar",
-        email: "ajith@company.com",
-        designation: "Backend Developer",
-        joinedDate: "18 Jun 2024",
-        status: "Active",
-        statusClass: "active",
-        team: "Developer",
-      },
-      {
-        id: 6,
-        name: "Suresh M",
-        email: "suresh@company.com",
-        designation: "Frontend Developer",
-        joinedDate: "10 Nov 2024",
-        status: "Inactive",
-        statusClass: "inactive",
-        team: "Developer",
-      },
-    ],
+  // ROUP USERS (no useEffect needed)
+  const usersByDepartment = useMemo(() => {
 
-    SEO: [
-      {
-        id: 7,
-        name: "Divya S",
-        email: "divya@company.com",
-        designation: "SEO Specialist",
-        joinedDate: "18 Aug 2024",
-        status: "Active",
-        statusClass: "active",
-        team: "SEO",
-      },
-      {
-        id: 8,
-        name: "Meena R",
-        email: "meena@company.com",
-        designation: "Content Strategist",
-        joinedDate: "01 Dec 2024",
-        status: "Active",
-        statusClass: "active",
-        team: "SEO",
-      },
-      {
-        id: 9,
-        name: "Prakash V",
-        email: "prakash@company.com",
-        designation: "SEO Analyst",
-        joinedDate: "22 Jan 2025",
-        status: "Inactive",
-        statusClass: "inactive",
-        team: "SEO",
-      },
-    ],
-  };
+    return users.reduce((acc, user) => {
+
+      const dept = user.department || 'Others'
+
+      if (!acc[dept]) acc[dept] = []
+
+      acc[dept].push({
+        id: user._id,
+        name: user.name || 'N/A',
+        email: user.email || 'N/A',
+        phone: user.phone || 'N/A',
+        address: user.address || 'N/A',
+        role: user.role || 'N/A',
+        department: dept,
+        team: dept,
+
+        joinedDate: user.createdAt
+          ? new Date(user.createdAt).toLocaleDateString()
+          : 'N/A',
+
+        updatedDate: user.updatedAt
+          ? new Date(user.updatedAt).toLocaleDateString()
+          : 'N/A',
+
+        status: user.isActive ? 'Active' : 'Inactive',
+        statusClass: user.isActive ? 'active' : 'inactive'
+      })
+
+      return acc
+
+    }, {})
+
+  }, [users])
+
+  //  DELETE
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this user?')) return
+
+    try {
+      await deleteUser(id)
+      alert('User deleted')
+    } catch (err) {
+      alert('Delete failed')
+    }
+  }
 
   return (
     <section>
-      <div className="inner-user">
-
+      <div className='inner-user'>
         <Container fluid>
 
-          {Object.entries(usersByDesignation).map(
-            ([designation, users]) =>
-              Array.isArray(users) && users.length > 0 && (
-                <div key={designation} className="team-section">
+          {loading ? (
+            <div className='text-center mt-5'>
+              <Spinner animation='border' />
+            </div>
 
-                  <h3 className="main-head mt-5 mb-3">
-                    {designation} Team
-                  </h3>
+          ) : Object.keys(usersByDepartment).length === 0 ? (
+            <div className='text-center mt-5'>
+              <h5>No Users Found</h5>
+            </div>
 
-                  <Row className="g-4">
-                    {users.map((user) =>
-                      user ? (
-                        <Col key={user.id} xl={4} lg={4} md={6} sm={12}>
-                          <UserCard user={user} />
-                        </Col>
-                      ) : null
-                    )}
-                  </Row>
+          ) : (
+            Object.entries(usersByDepartment).map(([department, users]) => (
+              <div key={department} className='team-section'>
 
-                </div>
-              )
+                <h3 className='main-head mt-5 mb-3'>
+                  {department} Team
+                </h3>
+
+                <Row className='g-4'>
+                  {users.map(user => (
+                    <Col key={user.id} xl={4} lg={4} md={6} sm={12}>
+                      <UserCard
+                        user={user}
+                        onDelete={() => handleDelete(user.id)}
+                      />
+                    </Col>
+                  ))}
+                </Row>
+
+              </div>
+            ))
           )}
 
         </Container>
       </div>
-
     </section>
-  );
-};
+  )
+}
 
-export default ViewUserPage;
+export default ViewUserPage

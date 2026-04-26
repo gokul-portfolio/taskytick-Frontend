@@ -1,90 +1,136 @@
-import React, { useState } from "react";
-import {
-    FaFlag,
-    FaCalendarAlt,
-    FaTag,
-} from "react-icons/fa";
+import React, { useState, useEffect } from 'react'
+import { FaFlag, FaCalendarAlt, FaTag, FaUser, FaTrash } from 'react-icons/fa'
 
 const TaskCard = ({
-    title,
-    description,
-    tags = [],
-    priority = "medium",
-    status = "not-started",     // 🔥 default
-    dueDate,
-    role = "user",              // "user" | "admin"
-    onStatusChange,
+  id,
+  title = 'No Title',
+  description = 'No Description',
+  tags = [],
+  priority = 'medium',
+  status = 'not-started',
+  dueDate,
+  assignedTo = 'Unassigned',
+  role = 'user',
+  onStatusChange,
+  onDelete // 🔥 NEW
 }) => {
+  const [taskStatus, setTaskStatus] = useState(status)
+  const [updating, setUpdating] = useState(false)
 
-    const [taskStatus, setTaskStatus] = useState(status);
+  // 🔥 sync status
+  useEffect(() => {
+    setTaskStatus(status)
+  }, [status])
 
-    const handleStatusChange = (e) => {
-        const value = e.target.value;
-        setTaskStatus(value);
-        onStatusChange && onStatusChange(value);
-    };
+  // 🔥 UPDATE STATUS
+  const handleStatusChange = async e => {
+    if (updating) return
 
-    return (
-        <div className={`task-card priority-${priority}`}>
+    const value = e.target.value
+    setTaskStatus(value)
 
-            {/* HEADER */}
-            <div className="task-card-header">
-                <h4 className="task-title">{title}</h4>
+    if (onStatusChange) {
+      try {
+        setUpdating(true)
+        await onStatusChange(id, value)
+      } catch (err) {
+        console.error('Status update failed', err)
+        setTaskStatus(status) // rollback
+      } finally {
+        setUpdating(false)
+      }
+    }
+  }
 
-                {/* STATUS DROPDOWN */}
-                <select
-                    className={`task-status-dropdown status-${taskStatus}`}
-                    value={taskStatus}
-                    onChange={handleStatusChange}
-                >
-                    <option value="not-started">Not Started</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="closed">Closed</option>
+  // 🔥 DELETE HANDLER
+  const handleDelete = () => {
+    if (window.confirm('Are you sure to delete this task?')) {
+      onDelete && onDelete(id)
+    }
+  }
 
+  const formatPriority = (p = 'medium') =>
+    p.charAt(0).toUpperCase() + p.slice(1)
 
-                    {/* 🔥 ADMIN ONLY */}
-                    {role === "admin" && (
-                        <option value="closed">Completed</option>
-                    )}
-                </select>
-            </div>
+  return (
+    <div className={`task-card priority-${priority}`}>
+      {/* HEADER */}
+      <div className='task-card-header d-flex justify-content-between align-items-center'>
+        <h4 className='task-title'>{title}</h4>
 
-            {/* DESCRIPTION */}
-            <p className="task-desc">{description}</p>
+        <div className='d-flex align-items-center gap-2'>
+          {/* STATUS */}
+          <select
+            className={`task-status-dropdown status-${taskStatus}`}
+            value={taskStatus}
+            onChange={handleStatusChange}
+            disabled={updating}
+          >
+            <option value='not-started'>Not Started</option>
+            <option value='in-progress'>In Progress</option>
 
-            {/* TAGS */}
-            {tags.length > 0 && (
-                <div className="task-tags">
-                    {tags.map((tag, index) => (
-                        <span key={index} className="task-tag">
-                            <FaTag />
-                            {tag}
-                        </span>
-                    ))}
-                </div>
+            {role === 'admin' ? (
+              <option value='completed'>Completed</option>
+            ) : (
+              <option value='closed'>Closed</option>
             )}
+          </select>
 
-            {/* FOOTER */}
-            <div className="task-card-footer">
-
-                {/* PRIORITY */}
-                <div className="task-meta">
-                    <FaFlag />
-                    <span className={`priority-text ${priority}`}>
-                        {priority}
-                    </span>
-                </div>
-
-                {/* DUE DATE */}
-                {dueDate && (
-                    <div className="task-meta">
-                        <FaCalendarAlt />
-                        <span>{dueDate}</span>
-                    </div>
-                )}
-            </div>
+          {/* 🔥 DELETE BUTTON */}
+          {role === 'admin' && (
+            <button
+              className='delete-task-icon'
+              onClick={handleDelete}
+              title='Delete Task'
+            >
+              <FaTrash />
+            </button>
+          )}
         </div>
-    );
-};
+      </div>
 
-export default TaskCard;
+      {/* DESCRIPTION */}
+      <p className='task-desc'>{description}</p>
+
+      {/* ASSIGNED USER */}
+      <div className='task-assigned d-flex align-items-center gap-2'>
+        <FaUser />
+        <span>
+          Assigned to <strong>{assignedTo || 'Unassigned'}</strong>
+        </span>
+      </div>
+
+      {/* TAGS */}
+      {tags?.length > 0 && (
+        <div className='task-tags mt-2'>
+          {tags.map((tag, i) => (
+            <span key={i} className='task-tag me-2'>
+              <FaTag /> {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* FOOTER */}
+      <div className='task-card-footer d-flex justify-content-between mt-3'>
+        {/* PRIORITY */}
+        <div className='task-meta d-flex align-items-center gap-1'>
+          <FaFlag />
+          <span className={`priority-text ${priority}`}>
+            {formatPriority(priority)}
+          </span>
+        </div>
+
+        {/* DUE DATE */}
+        {dueDate && (
+          <div className='task-meta d-flex align-items-center gap-1'>
+            <FaCalendarAlt />
+            <span>{dueDate}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default TaskCard

@@ -1,234 +1,216 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import React, { useState, useEffect } from 'react'
+import { Container, Row, Col, Form, Spinner } from 'react-bootstrap'
+import { useParams, useNavigate } from 'react-router-dom'
 
-/* Reusable Inputs */
-import TextInput from "../../components/form/TextInput";
-import TextArea from "../../components/form/TextArea";
-import SelectInput from "../../components/form/SelectInput";
-import CheckboxInput from "../../components/form/CheckboxInput";
+/* Inputs */
+import TextInput from '../../components/form/TextInput'
+import SelectInput from '../../components/form/SelectInput'
 
 /* Icons */
 import {
-    FiUser,
-    FiMail,
-    FiPhone,
-    FiBriefcase,
-    FiShield,
-    FiLock,
-    FiCheckCircle,
-    FiRefreshCcw,
-    FiInfo,
-} from "react-icons/fi";
+  FiUser,
+  FiMail,
+  FiUsers,
+  FiCheckCircle,
+  FiRefreshCcw
+} from 'react-icons/fi'
 
 /* Button */
-import Button from "../../components/common/Button";
+import Button from '../../components/common/Button'
+
+/* Context */
+import { useUser } from '../../context/UserContext'
 
 const EditUserPage = () => {
-    const [userData, setUserData] = useState({
-        fullName: "",
-        email: "",
-        phone: "",
-        role: "",
-        department: "",
-        password: "",
-        address: "",
-        isActive: true,
-        isAdmin: false,
-    });
+  const { id } = useParams()
+  const navigate = useNavigate()
 
-    useEffect(() => {
-        const existingUser = {
-            fullName: "Arun Kumar",
-            email: "arun@company.com",
-            phone: "9876543210",
-            role: "uiux_designer",
-            department: "design",
-            address: "Coimbatore, Tamil Nadu",
-            isActive: true,
-            isAdmin: false,
-        };
+  const { getUserById, updateUser } = useUser()
 
-        setUserData(existingUser);
-    }, []);
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    role: '',
+    status: 'active'
+  })
 
-    /* HANDLE INPUT CHANGE */
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
-        setUserData((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : value,
-            isAdmin: name === "role" && value === "admin" ? true : prev.isAdmin,
-        }));
-    };
+  // ================= LOAD USER =================
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getUserById(id)
 
-    /* SUBMIT */
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Update User Payload:", userData);
-    };
+        console.log('API RESPONSE:', res)
 
+        // Flexible handling (important)
+        const user = res.user || res.data || res
+
+        setUserData({
+          name: user?.name || '',
+          email: user?.email || '',
+          phone: user?.phone || '',
+          address: user?.address || '',
+          role: user?.role || '',
+          status: user?.status || 'active'
+        })
+      } catch (err) {
+        console.error('Fetch Error:', err)
+        alert('Failed to load user ❌')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUser()
+  }, [id])
+
+  // ================= HANDLE CHANGE =================
+  const handleChange = e => {
+    const { name, value } = e.target
+
+    setUserData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  // ================= SUBMIT =================
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    try {
+      setSaving(true)
+
+      await updateUser(id, userData)
+
+      alert('User updated successfully ✅')
+      navigate('/admin/users')
+    } catch (err) {
+      console.error('Update Error:', err)
+      alert('Update failed ❌')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // ================= RESET =================
+  const handleReset = () => {
+    window.location.reload() // reload original data
+  }
+
+  // ================= LOADING =================
+  if (loading) {
     return (
-        <section>
-            <div className="inner-create-user">
-                <Container fluid>
+      <div className='d-flex justify-content-center align-items-center mt-5'>
+        <Spinner animation='border' />
+      </div>
+    )
+  }
 
-                    {/* HEADER */}
-                    <div className="mb-4">
-                        <h4 className="main-head">Edit User</h4> <br />
-                        <small className="text-muted">
-                            Update user details and permissions
-                        </small>
-                    </div>
+  return (
+    <section>
+      <Container fluid>
+        {/* HEADER */}
+        <div className='mb-4 d-flex flex-column'>
+          <h4 className='main-head'>Edit User</h4>
+          <small className='text-muted'>Update user details</small>
+        </div>
 
-                    <Form onSubmit={handleSubmit} className="main-parent-form">
-                        <Row>
+        <Form onSubmit={handleSubmit} className='main-parent-form'>
+          <Row>
+            {/* LEFT */}
+            <Col lg={6}>
+              <TextInput
+                label='Full Name'
+                name='name'
+                value={userData.name}
+                onChange={handleChange}
+                placeholder='Enter name'
+                icon={<FiUser />}
+                required
+              />
 
-                            {/* LEFT SIDE */}
-                            <Col lg={8}>
-                                <TextInput
-                                    label="Full Name"
-                                    name="fullName"
-                                    value={userData.fullName}
-                                    onChange={handleChange}
-                                    placeholder="Enter full name"
-                                    required
-                                    icon={<FiUser />}
-                                />
+              <TextInput
+                label='Email'
+                name='email'
+                value={userData.email}
+                onChange={handleChange}
+                placeholder='Enter email'
+                icon={<FiMail />}
+                required
+              />
+            </Col>
+            {/* RIGHT */}
+            <Col lg={6}>
+              <SelectInput
+                label='Role'
+                name='role'
+                value={userData.role}
+                onChange={handleChange}
+                icon={<FiUsers />}
+                options={[
+                  { value: 'admin', label: 'Admin' },
+                  { value: 'user', label: 'User' }
+                ]}
+              />
 
-                                <TextInput
-                                    label="Email Address"
-                                    name="email"
-                                    type="email"
-                                    value={userData.email}
-                                    onChange={handleChange}
-                                    placeholder="Enter email"
-                                    required
-                                    icon={<FiMail />}
-                                />
+              <SelectInput
+                label='Status'
+                name='status'
+                value={userData.status}
+                onChange={handleChange}
+                options={[
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' }
+                ]}
+              />
+            </Col>
+            <Col lg={6}>
+              <TextInput
+                label='Phone Number'
+                name='phone'
+                value={userData.phone}
+                onChange={handleChange}
+                placeholder='Enter phone number'
+              />
+            </Col>
+            <Col lg={6}>
+              <TextInput
+                label='Address'
+                name='address'
+                value={userData.address}
+                onChange={handleChange}
+                placeholder='Enter address'
+              />
+            </Col>
+          </Row>
 
-                                <TextInput
-                                    label="Phone Number"
-                                    name="phone"
-                                    value={userData.phone}
-                                    onChange={handleChange}
-                                    placeholder="Enter phone number"
-                                    icon={<FiPhone />}
-                                />
+          {/* ACTION BUTTONS */}
+          <div className='d-flex justify-content-center gap-2 mt-4'>
+            <Button
+              type='submit'
+              label={saving ? 'Updating...' : 'Update User'}
+              icon={<FiCheckCircle />}
+              disabled={saving}
+            />
 
-                                <TextArea
-                                    label="Address"
-                                    name="address"
-                                    value={userData.address}
-                                    onChange={handleChange}
-                                    rows={4}
-                                    placeholder="User address"
-                                    icon={<FiBriefcase />}
-                                />
-                            </Col>
+            <Button
+              type='button'
+              label='Reset'
+              variant='secondary'
+              icon={<FiRefreshCcw />}
+              onClick={handleReset}
+            />
+          </div>
+        </Form>
+      </Container>
+    </section>
+  )
+}
 
-                            {/* RIGHT SIDE */}
-                            <Col lg={4}>
-                                <SelectInput
-                                    label="Role"
-                                    name="role"
-                                    value={userData.role}
-                                    onChange={handleChange}
-                                    required
-                                    icon={<FiShield />}
-                                    options={[
-                                        { value: "admin", label: "Admin" },
-                                        { value: "project_manager", label: "Project Manager" },
-                                        { value: "team_lead", label: "Team Lead" },
-                                        { value: "team_member", label: "Team Member" },
-                                        { value: "frontend_dev", label: "Frontend Developer" },
-                                        { value: "backend_dev", label: "Backend Developer" },
-                                        { value: "fullstack_dev", label: "Full Stack Developer" },
-                                        { value: "uiux_designer", label: "UI / UX Designer" },
-                                        { value: "qa_tester", label: "QA / Tester" },
-                                    ]}
-                                />
-
-                                <SelectInput
-                                    label="Department"
-                                    name="department"
-                                    value={userData.department}
-                                    onChange={handleChange}
-                                    icon={<FiBriefcase />}
-                                    options={[
-                                        { value: "tech", label: "Technology" },
-                                        { value: "design", label: "Design" },
-                                        { value: "marketing", label: "Marketing" },
-                                        { value: "operations", label: "Operations" },
-                                    ]}
-                                />
-
-                                <TextInput
-                                    label="Change Password (Optional)"
-                                    name="password"
-                                    type="password"
-                                    value={userData.password}
-                                    onChange={handleChange}
-                                    placeholder="Leave empty to keep same password"
-                                    icon={<FiLock />}
-                                />
-
-                                <CheckboxInput
-                                    label="Active User"
-                                    name="isActive"
-                                    checked={userData.isActive}
-                                    onChange={handleChange}
-                                />
-
-                                {userData.role !== "admin" && (
-                                    <CheckboxInput
-                                        label="Grant Admin Access"
-                                        name="isAdmin"
-                                        checked={userData.isAdmin}
-                                        onChange={handleChange}
-                                    />
-                                )}
-                            </Col>
-
-                        </Row>
-
-                        {/* ACTION BUTTONS */}
-                        <div className="d-flex justify-content-center align-items-center gap-2">
-                            <Button
-                                type="submit"
-                                label="Update User"
-                                icon={<FiCheckCircle />}
-                            />
-
-                            <Button
-                                type="reset"
-                                label="Reset Changes"
-                                variant="secondary"
-                                icon={<FiRefreshCcw />}
-                            />
-                        </div>
-                    </Form>
-
-                    {/* NOTES */}
-                    <div className="highlight-notes mt-3">
-                        <div className="highlight-notes-box">
-                            <span className="highlight-icon">
-                                <FiInfo />
-                            </span>
-
-                            <h6 className="highlight-title">Important Notes</h6>
-
-                            <p className="highlight-text">
-                                Updating role or department affects permissions immediately.
-                                Password change is optional.
-                            </p>
-                        </div>
-                    </div>
-
-                </Container>
-            </div>
-        </section>
-    );
-};
-
-export default EditUserPage;
+export default EditUserPage

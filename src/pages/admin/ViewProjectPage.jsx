@@ -1,52 +1,78 @@
-import React, { useState } from 'react'
-import { Container, Table, Badge, ProgressBar } from 'react-bootstrap'
-import { FiEdit, FiEye } from 'react-icons/fi'
+import React, { useEffect, useState } from 'react'
+import { Container, Table, Badge, ProgressBar, Pagination } from 'react-bootstrap'
+import { FiEdit, FiTrash } from 'react-icons/fi'
+
 import SelectInput from '../../components/form/SelectInput'
 import Button from '../../components/common/Button'
+import { useUser } from '../../context/UserContext'
+import { useNavigate } from 'react-router-dom'
 
 const ProjectPage = () => {
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: 'Website Revamp',
-      client: 'ABC Pvt Ltd',
-      manager: 'Ravi Kumar',
-      status: 'active',
-      priority: 'high',
+  const {
+    projects,
+    fetchProjects,
+    updateProject,
+    deleteProject
+  } = useUser()
 
-      // 🔥 NEW PROJECT DETAILS
-      startDate: '2026-04-01',
-      deadline: '2026-04-30',
-      progress: 65,
-      taskCount: 24
-    },
-    {
-      id: 1,
-      name: 'Website Revamp',
-      client: 'ABC Pvt Ltd',
-      manager: 'Ravi Kumar',
-      status: 'active',
-      priority: 'high',
+  const navigate = useNavigate()
 
-      // 🔥 NEW PROJECT DETAILS
-      startDate: '2026-04-01',
-      deadline: '2026-04-30',
-      progress: 65,
-      taskCount: 24
-    }
-  ])
+  // 🔥 PAGINATION STATE
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
 
-  const handleStatusChange = (id, newStatus) => {
-    setProjects(prev =>
-      prev.map(p => (p.id === id ? { ...p, status: newStatus } : p))
-    )
+  useEffect(() => {
+    fetchProjects()
+  }, [])
+
+  // 🔥 PAGINATION LOGIC
+  const indexOfLast = currentPage * itemsPerPage
+  const indexOfFirst = indexOfLast - itemsPerPage
+  const currentProjects = projects.slice(indexOfFirst, indexOfLast)
+
+  const totalPages = Math.ceil(projects.length / itemsPerPage)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
   }
 
+  // 🔥 STATUS UPDATE
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateProject(id, {
+        status:
+          newStatus === 'on-hold'
+            ? 'Inactive'
+            : newStatus.charAt(0).toUpperCase() + newStatus.slice(1)
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  // 🔥 DELETE FUNCTION
+  const handleDelete = async id => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this project?'
+    )
+
+    if (!confirmDelete) return
+
+    try {
+      await deleteProject(id)
+      alert('✅ Project deleted successfully')
+    } catch (err) {
+      console.error(err)
+      alert('❌ Error deleting project')
+    }
+  }
+
+  // 🔥 STATUS BADGE
   const getStatusBadge = status => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'active':
         return <Badge bg='success'>Active</Badge>
-      case 'on-hold':
+      case 'inactive':
         return <Badge bg='warning'>On Hold</Badge>
       case 'completed':
         return <Badge bg='secondary'>Completed</Badge>
@@ -55,8 +81,9 @@ const ProjectPage = () => {
     }
   }
 
+  // 🔥 PRIORITY BADGE
   const getPriorityBadge = priority => {
-    switch (priority) {
+    switch (priority?.toLowerCase()) {
       case 'high':
         return <Badge bg='danger'>High</Badge>
       case 'medium':
@@ -72,15 +99,14 @@ const ProjectPage = () => {
     <section>
       <div className='inner-project'>
         <Container fluid>
-          {/* HEADER */}
-          <div className='mb-4 d-flex flex-column '>
+
+          <div className='mb-4 d-flex flex-column gap-1'>
             <h1 className='main-head'>Projects</h1>
             <small className='text-muted'>
               View projects, track progress & manage timelines
             </small>
           </div>
 
-          {/* TABLE */}
           <div className='project-table-wrapper'>
             <Table className='project-table align-middle'>
               <thead>
@@ -98,101 +124,137 @@ const ProjectPage = () => {
               </thead>
 
               <tbody>
-                {projects.map((project, index) => (
-                  <tr key={project.id}>
-                    <td>{index + 1}</td>
+                {currentProjects?.length > 0 ? (
+                  currentProjects.map((project, index) => (
+                    <tr key={project._id}>
+                      <td>{indexOfFirst + index + 1}</td>
 
-                    <td>
-                      <strong>{project.name}</strong>
-                    </td>
+                      <td><strong>{project.name}</strong></td>
 
-                    <td>{project.client}</td>
+                      <td>{project.clientName || 'N/A'}</td>
 
-                    <td>{project.manager}</td>
+                      <td>{project.projectManager?.name || 'N/A'}</td>
 
-                    <td style={{ minWidth: '260px' }}>
-                      <div className='project-details'>
-                        <div className='detail-row'>
-                          <span>
-                            <i className='bi bi-calendar-event me-1'></i>
-                            Start:
-                          </span>
-                          <strong>{project.startDate}</strong>
+                      <td style={{ minWidth: '260px' }}>
+                        <div className='project-details'>
+
+                          <div className='detail-row'>
+                            <span>Start:</span>
+                            <strong>
+                              {project.startDate
+                                ? project.startDate.slice(0, 10)
+                                : 'N/A'}
+                            </strong>
+                          </div>
+
+                          <div className='detail-row'>
+                            <span>End:</span>
+                            <strong>
+                              {project.endDate
+                                ? project.endDate.slice(0, 10)
+                                : 'N/A'}
+                            </strong>
+                          </div>
+
+                          <div className='detail-row'>
+                            <span>Progress:</span>
+                            <ProgressBar
+                              now={project.progress || 0}
+                              label={`${project.progress || 0}%`}
+                            />
+                          </div>
+
+                          <div className='detail-row'>
+                            <span>Tasks:</span>
+                            <strong>{project.taskCount || 0}</strong>
+                          </div>
+
                         </div>
+                      </td>
 
-                        <div className='detail-row'>
-                          <span>
-                            <i className='bi bi-hourglass-split me-1'></i>
-                            Deadline:
-                          </span>
-                          <strong>{project.deadline}</strong>
-                        </div>
+                      <td>{getPriorityBadge(project.priority)}</td>
 
-                        <div className='detail-row'>
-                          <span>
-                            <i className='bi bi-graph-up me-1'></i>
-                            Progress:
-                          </span>
-                          <ProgressBar
-                            now={project.progress}
-                            label={`${project.progress}%`}
-                            variant='success'
-                            className='mt-1'
+                      <td>{getStatusBadge(project.status)}</td>
+
+                      <td>
+                        <SelectInput
+                          value={project.status?.toLowerCase()}
+                          onChange={e =>
+                            handleStatusChange(project._id, e.target.value)
+                          }
+                          options={[
+                            { value: 'active', label: 'Active' },
+                            { value: 'on-hold', label: 'On Hold' },
+                            { value: 'completed', label: 'Completed' }
+                          ]}
+                        />
+                      </td>
+
+                      <td>
+                        <div className='d-flex gap-2'>
+
+                          <Button
+                            size='sm'
+                            variant='outline-secondary'
+                            icon={<FiEdit />}
+                            title='Edit'
+                            onClick={() =>
+                              navigate(`/admin/projects/edit/${project._id}`)
+                            }
                           />
+
+                          <Button
+                            size='sm'
+                            variant='outline-danger'
+                            icon={<FiTrash />}
+                            title='Delete'
+                            onClick={() => handleDelete(project._id)}
+                          />
+
                         </div>
+                      </td>
 
-                        <div className='detail-row'>
-                          <span>
-                            <i className='bi bi-list-check me-1'></i>
-                            Tasks:
-                          </span>
-                          <strong>{project.taskCount}</strong>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td>{getPriorityBadge(project.priority)}</td>
-
-                    <td>{getStatusBadge(project.status)}</td>
-
-                    {/* STATUS UPDATE */}
-                    <td style={{ minWidth: '150px' }}>
-                      <SelectInput
-                        value={project.status}
-                        onChange={e =>
-                          handleStatusChange(project.id, e.target.value)
-                        }
-                        options={[
-                          { value: 'active', label: 'Active' },
-                          { value: 'on-hold', label: 'On Hold' },
-                          { value: 'completed', label: 'Completed' }
-                        ]}
-                      />
-                    </td>
-
-                    {/* ACTIONS */}
-                    <td>
-                      <div className='d-flex gap-2'>
-                        <Button
-                          size='sm'
-                          
-                          variant='outline-primary'
-                          icon={<FiEye />}
-                          title='View'
-                        />
-                        <Button
-                          size='sm'
-                          variant='outline-secondary'
-                          icon={<FiEdit />}
-                          title='Edit'
-                        />
-                      </div>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan='9' className='text-center'>
+                      No Projects Found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
             </Table>
           </div>
+
+          {/* 🔥 PAGINATION */}
+          <div className="d-flex justify-content-center mt-4 custum-pagenation" >
+            <Pagination>
+
+              <Pagination.Prev
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+              />
+
+              {[...Array(totalPages)].map((_, i) => (
+                <Pagination.Item
+                  key={i}
+                  active={i + 1 === currentPage}
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ))}
+
+              <Pagination.Next
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+              />
+
+            </Pagination>
+          </div>
+
         </Container>
       </div>
     </section>

@@ -2841,3 +2841,232 @@ ol {
     background: linear-gradient(90deg, #CB7A21, #ff9f43);
     font-size: 10px;
 }
+
+/* added */
+
+.user-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* HEADER */
+.user-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-status {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.user-status.active {
+    background: #e6f7ee;
+    color: #0f9d58;
+}
+
+.user-status.inactive {
+    background: #fdecea;
+    color: #d93025;
+}
+
+/* CONTACT */
+.user-contact p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 0;
+    font-size: 13px;
+    color: #555;
+}
+
+/* INFO GRID */
+.user-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.user-card-footer {
+    margin-top: 5px;
+}
+
+.user-team-badge {
+    background: #003428;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.user-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.user-actions .action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.user-actions .edit-btn {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.user-actions .edit-btn:hover {
+    background: #ffe69c;
+    transform: translateY(-1px);
+}
+
+.user-actions .delete-btn {
+    background: #fdecea;
+    color: #b02a37;
+}
+
+.user-actions .delete-btn:hover {
+    background: #f8d7da;
+    transform: translateY(-1px);
+}
+
+.user-actions .action-btn svg {
+    font-size: 14px;
+}
+
+.task-assigned {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.task-assigned-icon {
+    font-size: 14px;
+    color: #888;
+}
+
+.task-assigned-text strong {
+    color: #222;
+    font-weight: 600;
+}
+
+.delete-task-icon {
+    border: none;
+    background: transparent;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.delete-task-icon:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #a71d2a;
+}
+
+.delete-task-icon:active {
+    transform: scale(0.9);
+}
+
+.team-section h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2d3d;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.custum-pagenation .pagination {
+    gap: 6px;
+}
+
+.custum-pagenation .page-item .page-link {
+    border-radius: 8px;
+    border: none;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #003428;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+}
+
+.custum-pagenation .page-item .page-link:hover {
+    background-color: #CB7A21;
+    color: #fff;
+}
+
+.custum-pagenation .page-item.active .page-link {
+    background-color: #CB7A21;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(203, 122, 33, 0.4);
+}
+
+.custum-pagenation .page-item.disabled .page-link {
+    background-color: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.custum-pagenation .page-item:first-child .page-link,
+.custum-pagenation .page-item:last-child .page-link {
+    font-weight: 600;
+}
