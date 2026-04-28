@@ -1,10 +1,9 @@
-import React from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import React, { useEffect, useMemo } from "react";
+import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 
-// ICONS (single import – IMPORTANT)
 import {
-  FiBell,
   FiCalendar,
   FiUsers,
   FiBriefcase,
@@ -12,251 +11,210 @@ import {
   FiPlus,
 } from "react-icons/fi";
 
-// CALENDAR
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
-// COMPONENTS
 import Button from "../../components/common/Button";
-import IconButton from "../../components/common/IconButton";
 import TaskCard from "../../components/user/TaskCard";
-
-// ASSETS
 import note from "../../assets/images/home/notes.png";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
 
-  // 🔔 Notification click handler
-  const handleNotification = () => {
-    console.log("Notification clicked");
-    // navigate("/notifications"); // optional
-  };
+  const {
+    tasks,
+    fetchTasks,
+    currentUser,
+    dataLoading,
+  } = useUser();
 
-  // High priority tasks data
-  const highPriorityTasks = [
-    {
-      title: "Fix login issue",
-      description: "OTP validation not working for some users",
-      priority: "high",
-      dueDate: "Today",
-      tags: ["bug", "auth"],
-    },
-    {
-      title: "Client dashboard UI",
-      description: "Finish dashboard layout before EOD",
-      priority: "high",
-      dueDate: "Today",
-      tags: ["ui", "urgent"],
-    },
-  ];
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  //  USER TASK FILTER
+  const myTasks = useMemo(() => {
+    return tasks?.filter((t) => {
+      const assignedId =
+        typeof t.assignedTo === "object"
+          ? t.assignedTo?._id
+          : t.assignedTo;
+
+      return (
+        assignedId === currentUser?._id ||
+        t.userId === currentUser?._id
+      );
+    });
+  }, [tasks, currentUser]);
+
+  //  STATS
+  const stats = useMemo(() => {
+    return {
+      total: myTasks.length,
+      inProgress: myTasks.filter(t => t.status === "in-progress").length,
+      high: myTasks.filter(t => t.priority === "high").length,
+      today: myTasks.filter(t =>
+        t.dueDate &&
+        new Date(t.dueDate).toDateString() === new Date().toDateString()
+      ).length
+    };
+  }, [myTasks]);
+
+  const highPriorityTasks = myTasks.filter(
+    t => t.priority === "high"
+  ).slice(0, 2);
+
+  if (dataLoading) {
+    return (
+      <div className="text-center mt-5">
+        <Spinner />
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <section className="dashboard-section">
       <Container fluid>
 
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
         <div className="dashboard-top d-flex justify-content-between align-items-center">
+          <h4>Dashboard</h4>
 
-          <h4 className="mb-0 fw-semibold">Dashboard</h4>
-
-          <div className="d-flex align-items-center gap-3">
-
-            <Button
-              label="Add Notes"
-              icon={<FiPlus />}
-              onClick={() => navigate("/tasks/create")}
-            />
-
-          </div>
+          <Button
+            label="Add Notes"
+            icon={<FiPlus />}
+            onClick={() => navigate("/user/tasks/create")}
+          />
         </div>
 
-        {/* ================= WELCOME + CALENDAR ================= */}
+        {/* WELCOME + CALENDAR */}
         <Row className="mt-4 align-items-stretch">
 
           {/* LEFT */}
-          <Col lg={8} className="d-flex flex-column">
+          <Col lg={8}>
             <Card className="welcome-card p-4 d-flex flex-row justify-content-between align-items-center">
 
               <div>
-                <h1 className="mb-2">Hi, Lorem 👋</h1>
-                <p className="text-muted mb-3">
-                  Manage your tasks efficiently today
+                <h1>Hi, {currentUser?.name || "User"} 👋</h1>
+
+                <p className="text-muted">
+                  You have {stats.total} tasks today
                 </p>
 
-                <div className="welcome-actions d-flex flex-wrap gap-3">
+                <div className="welcome-actions d-flex gap-3 flex-wrap">
 
-                  <span onClick={() => navigate("/tasks")} className="clickable">
-                    <FiCheckSquare className="me-1" />
-                    Manage Tasks
+                  <span onClick={() => navigate("/user/tasks")} className="clickable">
+                    <FiCheckSquare /> Tasks
                   </span>
 
-                  <span onClick={() => navigate("/projects")} className="clickable">
-                    <FiBriefcase className="me-1" />
-                    Projects
+                  <span onClick={() => navigate("/user/projects")} className="clickable">
+                    <FiBriefcase /> Projects
                   </span>
 
-                  <span onClick={() => navigate("/calendar")} className="clickable">
-                    <FiCalendar className="me-1" />
-                    Calendar
+                  <span onClick={() => navigate("/user/calendar")} className="clickable">
+                    <FiCalendar /> Calendar
                   </span>
 
-                  <span onClick={() => navigate("/team")} className="clickable">
-                    <FiUsers className="me-1" />
-                    Team
+                  <span onClick={() => navigate("/user/team")} className="clickable">
+                    <FiUsers /> Team
                   </span>
 
                 </div>
               </div>
 
-              <img
-                src={note}
-                alt="task"
-                className="welcome-img"
-                style={{ maxWidth: "180px" }}
-              />
-
+              <img src={note} alt="task" style={{ maxWidth: "160px" }} />
             </Card>
           </Col>
 
           {/* RIGHT */}
-          <Col lg={4} className="d-flex">
-            <Card className="side-card w-100 h-100 p-3">
-              <h1  className="main-head mb-3">Today</h1>
-
-              <div className="calendar-wrapper">
-                <Calendar
-                  value={new Date()}
-                  onChange={(date) => console.log(date)}
-                />
-              </div>
+          <Col lg={4}>
+            <Card className="side-card p-3">
+              <h5>Today</h5>
+              <Calendar value={new Date()} />
             </Card>
           </Col>
 
         </Row>
 
-        {/* ================= NOTES + STATS ================= */}
-        <Row className="mt-4 align-items-stretch">
+        {/* NOTES + STATS */}
+        <Row className="mt-4">
 
           {/* NOTES */}
-          <Col lg={5} className="d-flex">
-            <Card className="important-notes-card p-3 w-100 h-100">
+          <Col lg={5}>
+            <Card className="important-notes-card p-3">
+              <h5>Important Notes</h5>
 
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h1 className="main-head mb-3">Important Notes</h1>
-
-                <span
-                  className="view-all-btn"
-                  onClick={() => navigate("/notes")}
-                >
-                  View All
-                </span>
-              </div>
-
-              <div className="notes-list flex-grow-1">
-
-                <div className="note-item">
-                  <div className="note-dot high"></div>
-                  <div className="note-content">
-                    <h6>Client meeting at 4 PM</h6>
-                    <p>Discuss dashboard improvements</p>
-                    <span className="note-time">2 min ago</span>
-                  </div>
+              {myTasks.slice(0, 4).map(task => (
+                <div key={task._id} className="note-item">
+                  <h6>{task.title}</h6>
+                  <p>{task.description}</p>
                 </div>
+              ))}
 
-                <div className="note-item">
-                  <div className="note-dot medium"></div>
-                  <div className="note-content">
-                    <h6>Update login API</h6>
-                    <p>Fix token expiration issue</p>
-                    <span className="note-time">10 min ago</span>
-                  </div>
-                </div>
-                <div className="note-item">
-                  <div className="note-dot medium"></div>
-                  <div className="note-content">
-                    <h6>Update login API</h6>
-                    <p>Fix token expiration issue</p>
-                    <span className="note-time">10 min ago</span>
-                  </div>
-                </div>
-                <div className="note-item">
-                  <div className="note-dot medium"></div>
-                  <div className="note-content">
-                    <h6>Update login API</h6>
-                    <p>Fix token expiration issue</p>
-                    <span className="note-time">10 min ago</span>
-                  </div>
-                </div>
-
-                <div className="note-item">
-                  <div className="note-dot low"></div>
-                  <div className="note-content">
-                    <h6>Design dashboard UI</h6>
-                    <p>Create modern SaaS layout</p>
-                    <span className="note-time">30 min ago</span>
-                  </div>
-                </div>
-
-              </div>
             </Card>
           </Col>
 
           {/* STATS */}
-          <Col lg={7} className="d-flex">
-            <Card className="w-100 h-100 stat-container p-2 border-0 bg-transparent">
-              <Row className="h-100">
+          <Col lg={7}>
+            <Row>
 
-                <Col md={6} className="mt-3 d-flex">
-                  <Card className="stat-box w-100 h-100" onClick={() => navigate("/tasks")}>
-                    <FiCheckSquare />
-                    <p>Total Tasks</p>
-                    <h5>42</h5>
-                  </Card>
-                </Col>
+              <Col md={6} className="mb-4">
+                <Card className="stat-box">
+                  <p>Total Tasks</p>
+                  <h5>{stats.total}</h5>
+                </Card>
+              </Col>
 
-                <Col md={6} className="mt-3 d-flex">
-                  <Card className="stat-box w-100 h-100" onClick={() => navigate("/tasks?status=in-progress")}>
-                    <FiBriefcase />
-                    <p>In Progress</p>
-                    <h5>14</h5>
-                  </Card>
-                </Col>
+              <Col md={6} className="mb-4">
+                <Card className="stat-box">
+                  <p>In Progress</p>
+                  <h5>{stats.inProgress}</h5>
+                </Card>
+              </Col>
 
-                <Col md={6} className="mt-3 d-flex">
-                  <Card className="stat-box w-100 h-100" onClick={() => navigate("/tasks?priority=high")}>
-                    <FiCheckSquare />
-                    <p>High Priority</p>
-                    <h5>6</h5>
-                  </Card>
-                </Col>
+              <Col md={6} className="mb-4">
+                <Card className="stat-box">
+                  <p>High Priority</p>
+                  <h5>{stats.high}</h5>
+                </Card>
+              </Col>
 
-                <Col md={6} className="mt-3 d-flex">
-                  <Card className="stat-box w-100 h-100" onClick={() => navigate("/calendar")}>
-                    <FiCalendar />
-                    <p>Due Today</p>
-                    <h5>3</h5>
-                  </Card>
-                </Col>
+              <Col md={6} className="mb-4">
+                <Card className="stat-box">
+                  <p>Due Today</p>
+                  <h5>{stats.today}</h5>
+                </Card>
+              </Col>
 
-              </Row>
-            </Card>
+            </Row>
           </Col>
 
         </Row>
 
-        {/* ================= HIGH PRIORITY TASKS ================= */}
+        {/* HIGH PRIORITY */}
         <div className="mt-5">
-          <h1 className="main-head mb-3">
-            Today – High Priority Tasks
-          </h1>
+          <h5>Today – High Priority Tasks</h5>
 
           <Row>
-            {highPriorityTasks.map((task, index) => (
-              <Col md={6} key={index} className="mb-3">
-                <TaskCard {...task} />
-              </Col>
-            ))}
+            {highPriorityTasks.length > 0 ? (
+              highPriorityTasks.map(task => (
+                <Col md={6} key={task._id}>
+                  <TaskCard
+                    id={task._id}
+                    title={task.title}
+                    description={task.description}
+                    priority={task.priority}
+                    status={task.status}
+                    dueDate={task.dueDate}
+                    assignedTo={task.assignedTo?.name}
+                    role="user"
+                  />
+                </Col>
+              ))
+            ) : (
+              <p>No high priority tasks</p>
+            )}
           </Row>
         </div>
 

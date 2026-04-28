@@ -21,11 +21,12 @@ import {
 
 import { createTask } from '../../api/task.api'
 
-// 🔥 USE CONTEXT
+//  USE CONTEXT
 import { useUser } from '../../context/UserContext'
 
 const CreateTaskPage = () => {
-  const {  users, projects, fetchProjects  } = useUser() // 🔥 real users
+  
+  const { users, projects, fetchProjects } = useUser() //  real users
 
   const [filteredUsers, setFilteredUsers] = useState([])
 
@@ -42,9 +43,9 @@ const CreateTaskPage = () => {
 
   const [loading, setLoading] = useState(false)
 
-  // 🔥 FILTER USERS BASED ON ROLE
+  //  FILTER USERS BASED ON ROLE
   useEffect(() => {
-    fetchProjects() 
+    fetchProjects()
     if (!taskData.role) {
       setFilteredUsers([])
       return
@@ -57,7 +58,7 @@ const CreateTaskPage = () => {
     setFilteredUsers(filtered)
   }, [taskData.role, users])
 
-  // 🔄 handle input
+  //  handle input
   const handleChange = e => {
     const { name, value, type, checked } = e.target
     setTaskData(prev => ({
@@ -66,7 +67,7 @@ const CreateTaskPage = () => {
     }))
   }
 
-  // 🔥 SUBMIT
+  //  SUBMIT
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -88,7 +89,7 @@ const CreateTaskPage = () => {
 
       await createTask(payload)
 
-      alert('Task created successfully 🔥')
+      alert('Task created successfully ')
 
       // reset
       setTaskData({
@@ -189,26 +190,26 @@ const CreateTaskPage = () => {
               />
 
               {/* PROJECT (ONLY ACTIVE) */}
-            <SelectInput
-  label='Project'
-  name='project'
-  value={taskData.project}
-  onChange={handleChange}
-  icon={<FiBriefcase />}
-  options={
-    (projects || []).length > 0
-      ? projects.map(p => ({
-          value: p._id,     // 🔥 IMPORTANT (id save pannum)
-          label: p.name     // 🔥 UI la name show
-        }))
-      : [
-          {
-            value: '',
-            label: 'No projects available'
-          }
-        ]
-  }
-/>
+              <SelectInput
+                label='Project'
+                name='project'
+                value={taskData.project}
+                onChange={handleChange}
+                icon={<FiBriefcase />}
+                options={
+                  (projects || []).length > 0
+                    ? projects.map(p => ({
+                        value: p._id, //  IMPORTANT (id save pannum)
+                        label: p.name //  UI la name show
+                      }))
+                    : [
+                        {
+                          value: '',
+                          label: 'No projects available'
+                        }
+                      ]
+                }
+              />
 
               {/* PRIORITY */}
               <SelectInput

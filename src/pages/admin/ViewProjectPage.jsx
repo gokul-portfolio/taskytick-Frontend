@@ -17,7 +17,7 @@ const ProjectPage = () => {
 
   const navigate = useNavigate()
 
-  // 🔥 PAGINATION STATE
+  //  PAGINATION STATE
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
@@ -25,7 +25,7 @@ const ProjectPage = () => {
     fetchProjects()
   }, [])
 
-  // 🔥 PAGINATION LOGIC
+  //  PAGINATION LOGIC
   const indexOfLast = currentPage * itemsPerPage
   const indexOfFirst = indexOfLast - itemsPerPage
   const currentProjects = projects.slice(indexOfFirst, indexOfLast)
@@ -36,7 +36,7 @@ const ProjectPage = () => {
     setCurrentPage(page)
   }
 
-  // 🔥 STATUS UPDATE
+  //  STATUS UPDATE
   const handleStatusChange = async (id, newStatus) => {
     try {
       await updateProject(id, {
@@ -50,7 +50,7 @@ const ProjectPage = () => {
     }
   }
 
-  // 🔥 DELETE FUNCTION
+  //  DELETE FUNCTION
   const handleDelete = async id => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete this project?'
@@ -60,14 +60,14 @@ const ProjectPage = () => {
 
     try {
       await deleteProject(id)
-      alert('✅ Project deleted successfully')
+      alert(' Project deleted successfully')
     } catch (err) {
       console.error(err)
       alert('❌ Error deleting project')
     }
   }
 
-  // 🔥 STATUS BADGE
+  //  STATUS BADGE
   const getStatusBadge = status => {
     switch (status?.toLowerCase()) {
       case 'active':
@@ -81,7 +81,7 @@ const ProjectPage = () => {
     }
   }
 
-  // 🔥 PRIORITY BADGE
+  //  PRIORITY BADGE
   const getPriorityBadge = priority => {
     switch (priority?.toLowerCase()) {
       case 'high':
@@ -228,7 +228,7 @@ const ProjectPage = () => {
             </Table>
           </div>
 
-          {/* 🔥 PAGINATION */}
+          {/*  PAGINATION */}
           <div className="d-flex justify-content-center mt-4 custum-pagenation" >
             <Pagination>
 

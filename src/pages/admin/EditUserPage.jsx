@@ -88,7 +88,7 @@ const EditUserPage = () => {
 
       await updateUser(id, userData)
 
-      alert('User updated successfully ✅')
+      alert('User updated successfully ')
       navigate('/admin/users')
     } catch (err) {
       console.error('Update Error:', err)

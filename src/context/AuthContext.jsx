@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { loginAPI } from '../api/auth.api' // 🔥 API import
+import { loginAPI } from '../api/auth.api' //  API import
 
 const AuthContext = createContext()
 
@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   // ============================================
-  // 🔥 On app load
+  //  On app load
   // ============================================
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -22,30 +22,30 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   // ============================================
-  // 🔐 LOGIN (UPDATED 🔥)
+  //  LOGIN (UPDATED )
   // ============================================
   const loginUser = async formData => {
     try {
       const data = await loginAPI(formData)
 
-      // 🔥 Save to localStorage
+      //  Save to localStorage
       localStorage.setItem('token', data.token)
       localStorage.setItem('role', data.user.role)
 
-      // 🔥 Update state
+      //  Update state
       setUser({
         token: data.token,
         role: data.user.role
       })
 
-      return data // 🔥 important
+      return data //  important
     } catch (err) {
       throw err
     }
   }
 
   // ============================================
-  // 🚪 LOGOUT
+  //  LOGOUT
   // ============================================
   const logout = () => {
     localStorage.removeItem('token')
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         isAuthenticated,
-        loginUser, // 🔥 updated function
+        loginUser, //  updated function
         logout,
         loading
       }}

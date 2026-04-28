@@ -6,7 +6,7 @@ const CheckboxInput = ({
   name,
   checked,
   onChange,
-  icon = null,      // 🔥 icon support
+  icon = null,      //  icon support
 }) => {
   return (
     <Form.Group className="mb-3 main-checkbox-input">

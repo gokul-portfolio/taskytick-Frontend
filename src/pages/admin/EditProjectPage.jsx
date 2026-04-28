@@ -21,7 +21,7 @@ import {
 import Button from "../../components/common/Button";
 
 const EditProjectPage = () => {
-  const { id } = useParams(); // 🔥 GET ID
+  const { id } = useParams(); //  GET ID
   const navigate = useNavigate();
 
   const {
@@ -43,7 +43,7 @@ const EditProjectPage = () => {
     billable: true,
   });
 
-  // 🔥 Load users + project data
+  //  Load users + project data
   useEffect(() => {
     fetchUsers();
 
@@ -66,7 +66,7 @@ const EditProjectPage = () => {
     fetchProject();
   }, [id]);
 
-  // 🔥 Managers filter
+  //  Managers filter
   const managers = users
     .filter((user) => user.role === "admin" || user.role === "manager")
     .map((user) => ({
@@ -98,9 +98,9 @@ const EditProjectPage = () => {
     try {
       await updateProject(id, projectData);
 
-      alert("✅ Project Updated Successfully");
+      alert(" Project Updated Successfully");
 
-      navigate("/admin/projects"); // 🔥 redirect
+      navigate("/admin/projects"); //  redirect
     } catch (err) {
       console.error(err);
       alert("❌ Error updating project");

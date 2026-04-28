@@ -9,7 +9,7 @@ const SelectInput = ({
   options = [],
   disabled = false,
   required = false,
-  icon = null, // 🔥 icon support
+  icon = null, //  icon support
 }) => {
   return (
     <Form.Group className="mb-3 main-select-input">

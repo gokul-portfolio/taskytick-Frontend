@@ -2,27 +2,30 @@ import { NavLink } from 'react-router-dom'
 import {
   FaTachometerAlt,
   FaTasks,
-  FaClipboardList,
-  FaPlusCircle,
+  FaLayerGroup,
+  FaCalendarAlt,
+  FaProjectDiagram,
+  FaUsers,
+  FaBell,
   FaUserCircle,
   FaCog,
+  FaClipboardList,
+  FaPlusCircle,
   FaSignOutAlt,
   FaChevronLeft,
   FaChevronRight,
-  FaBell,
-  FaUsers,
-  FaProjectDiagram,
-  FaCalendarAlt,
   FaChartBar,
   FaExclamationTriangle,
   FaFileAlt,
-  FaLayerGroup,
   FaUserShield,
   FaComments
-} from 'react-icons/fa'
+} from "react-icons/fa";
 
+import useLogout from "../../hooks/useLogout"; 
 import Logo from '../../assets/images/tasktick.webp'
+
 /* ================= MENU CONFIG ================= */
+
 export const adminMenu = [
   {
     section: 'MAIN',
@@ -35,7 +38,6 @@ export const adminMenu = [
     items: [
       { label: 'Users', path: '/admin/users', icon: FaUsers },
       { label: 'Create User', path: '/admin/users/create', icon: FaPlusCircle },
-      { label: 'Roles & Permissions', path: '/admin/user/roles-permissions', icon: FaUserShield }
     ]
   },
   {
@@ -53,78 +55,116 @@ export const adminMenu = [
       { label: 'Create Project', path: '/admin/projects/create', icon: FaPlusCircle }
     ]
   },
-  {
-    section: 'WORKFLOW',
-    items: [
-      { label: 'Calendar', path: '/admin/calendar', icon: FaCalendarAlt },
-      { label: 'Activity Logs', path: '/admin/activity', icon: FaFileAlt },
-      { label: 'Notifications', path: '/admin/notifications', icon: FaBell }
-    ]
-  },
+ 
   {
     section: 'ANALYTICS',
     items: [{ label: 'Reports', path: '/admin/reports', icon: FaChartBar }]
   },
-  {
-    section: 'SYSTEM',
-    items: [
-      { label: 'Alerts', path: '/admin/alerts', icon: FaExclamationTriangle },
-      { label: 'Settings', path: '/admin/settings', icon: FaCog },
-      { label: 'Profile', path: '/admin/profile', icon: FaUserCircle }
-    ]
-  }
+  // {
+  //   section: 'SYSTEM',
+  //   items: [
+  //     { label: 'Profile', path: '/admin/profile', icon: FaUserCircle }
+  //   ]
+  // }
 ]
 
 export const userMenu = [
   {
-    section: 'MAIN',
+    section: "MAIN",
     items: [
-      { label: 'Dashboard', path: '/user', icon: FaTachometerAlt, end: true }
+      {
+        label: "Dashboard",
+        path: "/user",
+        icon: FaTachometerAlt,
+        end: true
+      }
     ]
   },
+
   {
-    section: 'TASKS',
+    section: "TASKS",
     items: [
-      { label: 'My Tasks', path: '/user/tasks', icon: FaTasks },
-      { label: 'Task Board', path: '/user/tasks/board', icon: FaLayerGroup },
-      { label: 'Calendar', path: '/user/calendar', icon: FaCalendarAlt }
+      {
+        label: "My Tasks",
+        path: "/user/tasks",
+        icon: FaTasks
+      },
+      {
+        label: "Task Board",
+        path: "/user/board",
+        icon: FaLayerGroup
+      },
+      {
+        label: "Calendar",
+        path: "/user/calendar",
+        icon: FaCalendarAlt
+      }
     ]
   },
+
   {
-    section: 'COMMUNICATION',
+    section: "WORKSPACE",
     items: [
-      { label: 'Notifications', path: '/user/notifications', icon: FaBell },
-      { label: 'Messages', path: '/user/messages', icon: FaComments }
+      {
+        label: "Projects",
+        path: "/user/projects",
+        icon: FaProjectDiagram
+      },
+      {
+        label: "Team",
+        path: "/user/team",
+        icon: FaUsers
+      }
     ]
   },
+
   {
-    section: 'ACCOUNT',
+    section: "COMMUNICATION",
     items: [
-      { label: 'Profile', path: '/user/profile', icon: FaUserCircle },
-      { label: 'Settings', path: '/user/settings', icon: FaCog }
+      {
+        label: "Notifications",
+        path: "/user/notifications",
+        icon: FaBell
+      }
+    ]
+  },
+
+  {
+    section: "ACCOUNT",
+    items: [
+      {
+        label: "Profile",
+        path: "/user/profile",
+        icon: FaUserCircle
+      },
+      {
+        label: "Settings",
+        path: "/user/settings",
+        icon: FaCog
+      }
     ]
   }
-]
+];
+
 
 /* ================= SIDEBAR ================= */
 
 const Sidebar = ({ isOpen, toggleSidebar, role = 'user' }) => {
   const menuItems = role === 'admin' ? adminMenu : userMenu
 
-  const handleLogout = () => {
-    // clear token / session
-    localStorage.removeItem('token')
-    window.location.href = 'login'
-  }
+  const handleLogout = useLogout(); //  reusable logout
 
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
-      
+
       {/* HEADER */}
       <div className='sidebar-header'>
-        {isOpen && <h3 className='brand-name'> 
-          <img src={Logo} className='me-2 sidebar-logo' alt="" />
-           Tasktick</h3>}
+        {isOpen && (
+          <h3 className='brand-name'>
+            <img src={Logo} className='me-2 sidebar-logo' alt="" />
+            Tasktick
+          </h3>
+        )}
         <button className='collapse-btn' onClick={toggleSidebar}>
           {isOpen ? <FaChevronLeft /> : <FaChevronRight />}
         </button>
@@ -135,12 +175,8 @@ const Sidebar = ({ isOpen, toggleSidebar, role = 'user' }) => {
         {menuItems.map((section, index) => (
           <div key={index} className='menu-section'>
 
-            {/* SECTION TITLE */}
-            {isOpen && (
-              <p className='section-title'>{section.section}</p>
-            )}
+            {isOpen && <p className='section-title'>{section.section}</p>}
 
-            {/* ITEMS */}
             {section.items.map((item, i) => {
               const Icon = item.icon
 
@@ -168,6 +204,7 @@ const Sidebar = ({ isOpen, toggleSidebar, role = 'user' }) => {
         <FaSignOutAlt />
         {isOpen && <span>Logout</span>}
       </div>
+
     </aside>
   )
 }

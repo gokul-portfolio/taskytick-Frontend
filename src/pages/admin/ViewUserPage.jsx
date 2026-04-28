@@ -1,17 +1,21 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { Container, Row, Col, Spinner } from 'react-bootstrap'
 import UserCard from '../../components/common/UserCard'
 import { useUser } from '../../context/UserContext'
 
 const ViewUserPage = () => {
 
-  // DIRECT FROM CONTEXT
-  const { users, loading, deleteUser } = useUser()
+  //  CORRECT DATA
+  const { users, fetchUsers, dataLoading, deleteUser } = useUser()
 
-  // ROUP USERS (no useEffect needed)
+  //  FETCH USERS ON LOAD
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  //  GROUP USERS
   const usersByDepartment = useMemo(() => {
-
-    return users.reduce((acc, user) => {
+    return (users || []).reduce((acc, user) => {
 
       const dept = user.department || 'Others'
 
@@ -42,7 +46,6 @@ const ViewUserPage = () => {
       return acc
 
     }, {})
-
   }, [users])
 
   //  DELETE
@@ -62,16 +65,20 @@ const ViewUserPage = () => {
       <div className='inner-user'>
         <Container fluid>
 
-          {loading ? (
+          {/*  1. LOADING */}
+          {dataLoading ? (
             <div className='text-center mt-5'>
               <Spinner animation='border' />
+              <p>Loading users...</p>
             </div>
 
+          /*  2. EMPTY */
           ) : Object.keys(usersByDepartment).length === 0 ? (
             <div className='text-center mt-5'>
               <h5>No Users Found</h5>
             </div>
 
+          /*  3. DATA */
           ) : (
             Object.entries(usersByDepartment).map(([department, users]) => (
               <div key={department} className='team-section'>

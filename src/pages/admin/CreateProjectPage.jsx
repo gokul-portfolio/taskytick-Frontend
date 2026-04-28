@@ -34,12 +34,12 @@ const CreateProjectPage = () => {
     billable: true
   })
 
-  // 🔥 Fetch users on load
+  //  Fetch users on load
   useEffect(() => {
     fetchUsers()
   }, [])
 
-  // 🔥 Dynamic managers from users
+  //  Dynamic managers from users
   const managers = users
     .filter(user => user.role === 'admin' || user.role === 'manager')
     .map(user => ({
@@ -71,7 +71,7 @@ const CreateProjectPage = () => {
     try {
       await createProject(projectData)
 
-      alert('✅ Project Created Successfully 🚀')
+      alert(' Project Created Successfully ')
 
       setProjectData({
         name: '',
@@ -86,7 +86,7 @@ const CreateProjectPage = () => {
       })
     } catch (err) {
       console.error(err)
-      alert('❌ Error creating project')
+      alert(' Error creating project')
     }
   }
 
@@ -140,7 +140,7 @@ const CreateProjectPage = () => {
                 value={projectData.projectManager}
                 onChange={handleChange}
                 icon={<FiUsers />}
-                options={managers} // ✅ dynamic users
+                options={managers} //  dynamic users
               />
 
               <SelectInput

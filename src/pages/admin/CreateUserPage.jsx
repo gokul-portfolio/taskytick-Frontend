@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Container, Row, Col, Form } from 'react-bootstrap'
-import { useUser } from '../../context/UserContext' // 🔥 use context
+import { useUser } from '../../context/UserContext' //  use context
 
 /* Reusable Inputs */
 import TextInput from '../../components/form/TextInput'
@@ -25,7 +25,7 @@ import {
 import Button from '../../components/common/Button'
 
 const CreateUserPage = () => {
-  const { createUser } = useUser() // 🔥 API from context
+  const { createUser } = useUser() //  API from context
 
   const [userData, setUserData] = useState({
     fullName: '',
@@ -50,7 +50,7 @@ const CreateUserPage = () => {
     }))
   }
 
-  /* 🔥 SUBMIT (CONTEXT VERSION) */
+  /*  SUBMIT (CONTEXT VERSION) */
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -68,7 +68,7 @@ const CreateUserPage = () => {
 
       await createUser(payload)
 
-      alert('User Created Successfully ✅')
+      alert('User Created Successfully ')
 
       // reset form
       setUserData({

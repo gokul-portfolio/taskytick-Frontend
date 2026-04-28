@@ -21,6 +21,18 @@ import TaskCard from '../../components/user/TaskCard'
 
 import note from '../../assets/images/home/notes.png'
 
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis
+} from 'recharts'
+
 const DashboardPage = () => {
   const {
     users,
@@ -28,7 +40,7 @@ const DashboardPage = () => {
     projects,
     fetchUsers,
     fetchTasks,
-    fetchProjects, // 🔥 ADD THIS
+    fetchProjects, //  ADD THIS
     currentUser,
     deleteTask,
     updateTask
@@ -40,30 +52,77 @@ const DashboardPage = () => {
     fetchProjects()
   }, [])
   const stats = useMemo(() => {
-    const totalUsers = users.length
-    const totalTasks = tasks.length
+    const safeTasks = tasks || []
+    const safeUsers = users || []
+    const safeProjects = projects || []
 
-    const pendingTasks = tasks.filter(t => t.status === 'not-started').length
+    const totalUsers = safeUsers.length
+    const totalTasks = safeTasks.length
+    const totalProjects = safeProjects.length
 
-    const completedTasks = tasks.filter(t => t.status === 'completed').length
+    const pendingTasks = safeTasks.filter(
+      t => t.status === 'not-started'
+    ).length
+    const completedTasks = safeTasks.filter(
+      t => t.status === 'completed'
+    ).length
 
-    const highPriorityTasks = tasks.filter(t => t.priority === 'High')
+    const overdueTasks = safeTasks.filter(
+      t =>
+        t?.dueDate &&
+        new Date(t.dueDate) < new Date() &&
+        t.status !== 'completed'
+    ).length
+
+    const highPriorityTasks = safeTasks.filter(t => t.priority === 'High')
 
     return {
       totalUsers,
       totalTasks,
+      totalProjects,
       pendingTasks,
       completedTasks,
+      overdueTasks,
       highPriorityTasks
     }
-  }, [users, tasks])
+  }, [users, tasks, projects])
 
   const navigate = useNavigate()
 
   const handleNotification = () => {
     console.log('Notification clicked')
   }
+  const statusData = [
+    {
+      name: 'Todo',
+      value: (tasks || []).filter(t => t.status === 'Todo').length
+    },
+    {
+      name: 'In Progress',
+      value: (tasks || []).filter(t => t.status === 'In Progress').length
+    },
+    {
+      name: 'Done',
+      value: (tasks || []).filter(t => t.status === 'Done').length
+    }
+  ]
 
+  const priorityData = [
+    {
+      name: 'High',
+      value: (tasks || []).filter(t => t.priority === 'High').length
+    },
+    {
+      name: 'Medium',
+      value: (tasks || []).filter(t => t.priority === 'Medium').length
+    },
+    {
+      name: 'Low',
+      value: (tasks || []).filter(t => t.priority === 'Low').length
+    }
+  ]
+
+  const COLORS = ['#3498db', '#2ecc71', '#e74c3c']
   return (
     <section className='dashboard-section'>
       <Container fluid>
@@ -94,7 +153,7 @@ const DashboardPage = () => {
                     Monitor system activity and manage platform operations
                   </p>
 
-                  {/* 🔥 CLEAN ACTIONS */}
+                  {/*  CLEAN ACTIONS */}
                   <div className='welcome-actions d-flex flex-wrap gap-3'>
                     <span
                       onClick={() => navigate('/admin/users')}
@@ -122,7 +181,7 @@ const DashboardPage = () => {
                   </div>
                 </div>
 
-                {/* 🔥 IMAGE */}
+                {/*  IMAGE */}
                 <img
                   src={note}
                   alt='admin dashboard'
@@ -147,57 +206,133 @@ const DashboardPage = () => {
           </Row>
         </div>
 
+        {/* ======================char content==================== */}
+
+        <div className='dashboard-content-wrap'>
+          <Row className='g-4 mt-3'>
+            {/* TASK STATUS */}
+            <Col md={6}>
+              <Card className='report-card p-3 h-100'>
+                {/* HEADER */}
+                <div className='report-header'>
+                  <h5 className='main-head'>Task Status</h5>
+                </div>
+
+                {/* CHART */}
+                <div className='chart-center'>
+                  <ResponsiveContainer width={250} height={250}>
+                    <PieChart>
+                      <Pie
+                        data={statusData}
+                        dataKey='value'
+                        innerRadius={50}
+                        outerRadius={90}
+                        paddingAngle={3}
+                      >
+                        {statusData.map((entry, index) => (
+                          <Cell key={index} fill={COLORS[index]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            </Col>
+
+            {/* TASK PRIORITY */}
+            <Col md={6}>
+              <Card className='report-card p-3 h-100'>
+                {/* HEADER */}
+                <div className='report-header'>
+                  <h5 className='main-head'>Task Priority</h5>
+                </div>
+
+                {/* CHART */}
+                <ResponsiveContainer width='100%' height={250}>
+                  <BarChart data={priorityData}>
+                    <XAxis dataKey='name' />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey='value' radius={[6, 6, 0, 0]}>
+                      {priorityData.map((entry, index) => (
+                        <Cell
+                          key={index}
+                          fill={
+                            entry.name === 'High'
+                              ? '#e74c3c'
+                              : entry.name === 'Medium'
+                              ? '#f39c12'
+                              : '#2ecc71'
+                          }
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+
         {/* ================================notes and general detail */}
         <div className='dashboard-content-wrap'>
           <Row className='mt-4 align-items-stretch'>
-            {/* NOTES */}
-            <Col lg={4} className='d-flex order-2 order-lg-1'>
-              <Card className='important-notes-card p-3 w-100 h-100'>
+            <Col lg={4} className='d-flex'>
+              <Card className='side-card w-100 h-100 p-3'>
                 <div className='d-flex justify-content-between align-items-center mb-3'>
-                  <h1 className='main-head mb-3'>Important Notes</h1>
+                  <h1 className='main-head m-0'>Projects</h1>
 
                   <span
                     className='view-all-btn'
-                    onClick={() => navigate('/notes')}
+                    onClick={() => navigate('/admin/projects')}
                   >
                     View All
                   </span>
                 </div>
 
-                {/* 🔥 STATIC → later dynamic pannalaam */}
-                <div className='notes-list flex-grow-1'>
-                  {[
-                    {
-                      title: 'Client meeting',
-                      desc: 'Discuss dashboard',
-                      time: '2 min ago',
-                      type: 'high'
-                    },
-                    {
-                      title: 'Fix login API',
-                      desc: 'Token issue',
-                      time: '10 min ago',
-                      type: 'medium'
-                    },
-                    {
-                      title: 'Design UI',
-                      desc: 'Modern layout',
-                      time: '30 min ago',
-                      type: 'low'
-                    }
-                  ].map((note, i) => (
-                    <div key={i} className='note-item'>
-                      <div className={`note-dot ${note.type}`}></div>
-                      <div className='note-content'>
-                        <h6>{note.title}</h6>
-                        <p>{note.desc}</p>
-                        <span className='note-time'>{note.time}</span>
+                {/* PROJECT LIST */}
+                <div className='project-list'>
+                  {(projects || []).slice(0, 4).map(project => (
+                    <div key={project._id} className='project-item'>
+                      {/* TOP */}
+                      <div className='d-flex justify-content-between align-items-center'>
+                        <h6 className='project-title'>
+                          {project.name || 'Untitled'}
+                        </h6>
+
+                        <span
+                          className={`status-badge ${project.status?.toLowerCase()}`}
+                        >
+                          {project.status || 'Active'}
+                        </span>
                       </div>
+
+                      {/* PROGRESS */}
+                      <div className='progress-bar-wrapper mt-2'>
+                        <div
+                          className='progress-bar-fill'
+                          style={{ width: `${project.progress || 0}%` }}
+                        />
+                      </div>
+
+                      <small className='text-muted'>
+                        {project.progress || 0}% Completed
+                      </small>
                     </div>
                   ))}
+
+                  {/* EMPTY */}
+                  {projects?.length === 0 && (
+                    <p className='text-muted'>No projects available</p>
+                  )}
                 </div>
               </Card>
             </Col>
+
+            {/* NOTES */}
+
+           
 
             {/* STATS */}
             <Col lg={8} className='d-flex order-1 order-lg-2'>
@@ -366,7 +501,7 @@ const DashboardPage = () => {
                   {
                     new Set(
                       (tasks || [])
-                        .filter(t => t?.project) // ✅ safe check
+                        .filter(t => t?.project) //  safe check
                         .map(t => t.project)
                     ).size
                   }
@@ -385,7 +520,7 @@ const DashboardPage = () => {
                       (tasks || [])
                         .filter(
                           t =>
-                            t?.project && // ✅ must have project
+                            t?.project && //  must have project
                             t?.dueDate &&
                             new Date(t.dueDate) < new Date() &&
                             t?.status !== 'completed'
@@ -408,7 +543,7 @@ const DashboardPage = () => {
                       (tasks || [])
                         .filter(
                           t =>
-                            t?.project && // ✅ safe
+                            t?.project && //  safe
                             t?.status === 'completed'
                         )
                         .map(t => t.project)

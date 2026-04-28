@@ -1,95 +1,83 @@
-import { useState } from "react";
+import { Navbar, Container, Form, FormControl, Dropdown } from 'react-bootstrap'
 
-import {
-  Navbar,
-  Container,
-  Form,
-  FormControl,
-  Offcanvas,
-} from "react-bootstrap";
+import useLogout from '../../hooks/useLogout'
+import { FaBell, FaSearch, FaUser } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import { useUser } from '../../context/UserContext' //  IMPORTANT
 
-import {
-  FaBars,
-  FaBell,
-  FaUserCircle,
-  FaSearch,
-} from "react-icons/fa";
-
-import { FaUser } from "react-icons/fa";
-
-import tasktick from "../../assets/images/tasktick.webp";
+import tasktick from '../../assets/images/tasktick.webp'
 
 const Header = () => {
-  const [show, setShow] = useState(false);
-  const notificationCount = 5;
-  const userName = "Gokul";
+  const navigate = useNavigate()
+  const handleLogout = useLogout()
+
+  const { currentUser } = useUser() //  USE CONTEXT
+
+  const notificationCount = 5
 
   return (
-    <>
-      <Navbar className="nav-header-wrap">
-        <Container fluid className="header-inner">
-          <div className="header-left">
-            <Navbar.Brand className="logo-wrap">
-              <img src={tasktick} className="logo-img" alt="Logo" />
-            </Navbar.Brand>
+    <Navbar className='nav-header-wrap'>
+      <Container fluid className='header-inner'>
+        {/* LEFT */}
+        <div className='header-left'>
+          <Navbar.Brand className='logo-wrap'>
+            <img src={tasktick} className='logo-img' alt='Logo' />
+          </Navbar.Brand>
+        </div>
+
+        {/* RIGHT */}
+        <div className='header-right'>
+          {/* SEARCH */}
+          <Form className='header-search d-none d-lg-flex'>
+            <FaSearch className='search-icon' />
+            <FormControl
+              type='search'
+              placeholder='Search tasks, projects...'
+              className='search-input'
+            />
+          </Form>
+
+          {/* NOTIFICATION */}
+          <div className='icon-wrap notification-icon d-none d-lg-flex'>
+            <FaBell />
+            {notificationCount > 0 && (
+              <span className='notification-badge'>{notificationCount}</span>
+            )}
           </div>
 
-          <div className="header-right">
-            <Form className="header-search d-none d-lg-flex">
-              <FaSearch className="search-icon" />
-              <FormControl
-                type="search"
-                placeholder="Search tasks, projects..."
-                className="search-input"
-              />
-            </Form>
-            <div className="icon-wrap notification-icon d-none d-lg-flex">
-              <FaBell />
-              {notificationCount > 0 && (
-                <span className="notification-badge">
-                  {notificationCount}
-                </span>
-              )}
-            </div>
-            <div className="icon-wrap profile-wrap">
-              <FaUser />
-              <span className="profile-name">{userName}</span>
-            </div>
-            <div
-              className="mobile-menu d-lg-none"
-              onClick={() => setShow(true)}
+          {/* PROFILE DROPDOWN */}
+          <Dropdown align='end'>
+            <Dropdown.Toggle
+              variant='light'
+              id='dropdown-user'
+              className='d-flex align-items-center gap-2 profile-btn'
             >
-              <FaBars />
-            </div>
-          </div>
-        </Container>
-      </Navbar>
+              <FaUser />
+              <span>{currentUser?.name || 'User'}</span>
+            </Dropdown.Toggle>
 
-      {/* OFFCANVAS (MOBILE) */}
-      <Offcanvas
-        show={show}
-        onHide={() => setShow(false)}
-        placement="end"
-        className="custom-offcanvas"
-      >
-        <Offcanvas.Body className="offcanvas-custom">
-          <div className="offcanvas-profile">
-            <img src={tasktick} alt="Profile" />
-            <h6>{userName}</h6>
-            <span>admin@tasktick.com</span>
-          </div>
-          <ul className="offcanvas-menu">
-            <li className="active">Dashboard</li>
-            <li>My Tasks</li>
-            <li>Notifications</li>
-            <li>Settings</li>
-            <li className="">Logout</li>
-          </ul>
-        </Offcanvas.Body>
-      </Offcanvas>
-    </>
-  );
-};
+            <Dropdown.Menu>
+              <Dropdown.Header>
+                {currentUser?.email || 'user@mail.com'}
+              </Dropdown.Header>
 
-export default Header;
+              <Dropdown.Item onClick={() => navigate('/profile')}>
+                My Profile
+              </Dropdown.Item>
 
+              <Dropdown.Item onClick={() => navigate('/settings')}>
+                Settings
+              </Dropdown.Item>
+
+              <Dropdown.Divider />
+
+              <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      </Container>
+    </Navbar>
+  )
+}
+
+export default Header

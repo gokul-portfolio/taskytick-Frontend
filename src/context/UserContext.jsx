@@ -1,41 +1,74 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 
 const UserContext = createContext()
 
+// ================= AXIOS =================
+const API = axios.create({
+  baseURL: 'http://localhost:5000/api',
+  timeout: 10000
+})
+
+// ================= INTERCEPTORS =================
+API.interceptors.request.use(config => {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
+API.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem('token')
+      window.location.href = '/#/login'
+    }
+    return Promise.reject(err)
+  }
+)
+
 export const UserProvider = ({ children }) => {
   // ================= STATE =================
   const [users, setUsers] = useState([])
-  const [tasks, setTasks] = useState([]) // 🔥 IMPORTANT FIX
+  const [tasks, setTasks] = useState([])
+  const [projects, setProjects] = useState([])
   const [currentUser, setCurrentUser] = useState(null)
-  const [loading, setLoading] = useState(false)
 
-  // ================= AXIOS =================
-  const API = axios.create({
-    baseURL: 'http://localhost:5000/api'
-  })
+  const [loading, setLoading] = useState(true)
+  const [dataLoading, setDataLoading] = useState(false)
 
-  // 🔥 Attach Token
-  API.interceptors.request.use(config => {
-    const token = localStorage.getItem('token')
-    if (token) config.headers.Authorization = `Bearer ${token}`
-    return config
-  })
-
-  // ================= AUTH =================
-
-  const loginUser = async credentials => {
+  // ================= COMMON HANDLER =================
+  const handleRequest = async (apiCall, setter = null) => {
+    setDataLoading(true)
     try {
-      const res = await API.post('/auth/login', credentials)
-      const data = res.data?.data || res.data
+      const res = await apiCall()
 
-      localStorage.setItem('token', data.token)
-      setCurrentUser(data.user)
+      const data =
+        res.data?.data ||
+        res.data?.users ||
+        res.data ||
+        []
+
+      if (setter) setter(data)
 
       return data
     } catch (err) {
+      console.error(err.response?.data || err.message)
       throw err.response?.data || err.message
+    } finally {
+      setDataLoading(false)
     }
+  }
+
+  // ================= AUTH =================
+  const loginUser = async credentials => {
+    const data = await handleRequest(() =>
+      API.post('/auth/login', credentials)
+    )
+
+    localStorage.setItem('token', data.token)
+    await loadCurrentUser()
+    return data
   }
 
   const logoutUser = () => {
@@ -44,178 +77,182 @@ export const UserProvider = ({ children }) => {
   }
 
   const loadCurrentUser = async () => {
+    const token = localStorage.getItem('token')
+
+    if (!token) {
+      setLoading(false)
+      return null
+    }
+
+    setLoading(true)
     try {
-      const res = await API.get('/auth/me')
-      const user = res.data?.data || res.data
-      setCurrentUser(user)
+      const data = await handleRequest(() => API.get('/auth/me'))
+      setCurrentUser(data)
+      return data
     } catch {
-      console.log('No logged user')
+      setCurrentUser(null)
+      localStorage.removeItem('token')
+      return null
+    } finally {
+      setLoading(false)
     }
   }
 
   // ================= USERS =================
-
-  const fetchUsers = async () => {
-    setLoading(true)
-    try {
-      const res = await API.get('/users')
-      const data = res.data?.data || res.data || []
-      setUsers(data)
-      return data
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const fetchUsers = () =>
+    handleRequest(() => API.get('/users'), setUsers)
 
   const createUser = async data => {
-    const res = await API.post('/users', data)
+    const res = await handleRequest(() => API.post('/users', data))
     await fetchUsers()
-    return res.data
+    return res
   }
 
-  const getUserById = async id => {
-    const res = await API.get(`/users/${id}`)
-    return res.data?.data || res.data
-  }
+  const getUserById = id =>
+    handleRequest(() => API.get(`/users/${id}`))
 
   const updateUser = async (id, data) => {
-    const res = await API.put(`/users/${id}`, data)
+    const res = await handleRequest(() =>
+      API.put(`/users/${id}`, data)
+    )
     await fetchUsers()
-    return res.data
+    return res
   }
 
   const deleteUser = async id => {
-    const res = await API.delete(`/users/${id}`)
+    const res = await handleRequest(() =>
+      API.delete(`/users/${id}`)
+    )
     await fetchUsers()
-    return res.data
+    return res
   }
 
   // ================= TASKS =================
+  const fetchTasks = () =>
+    handleRequest(() => API.get('/tasks'), setTasks)
 
-  const fetchTasks = async () => {
-    setLoading(true)
-    try {
-      const res = await API.get('/tasks')
-      const data = res.data?.data || res.data || []
-      setTasks(data)
-      return data
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const createTask = async taskData => {
-    const res = await API.post('/tasks', taskData)
+  const createTask = async data => {
+    const res = await handleRequest(() =>
+      API.post('/tasks', data)
+    )
     await fetchTasks()
-    return res.data
+    return res
   }
 
-  const getTaskById = async id => {
-    const res = await API.get(`/tasks/${id}`)
-    return res.data?.data
-  }
+  const getTaskById = id =>
+    handleRequest(() => API.get(`/tasks/${id}`))
 
   const updateTask = async (id, data) => {
-    const res = await API.put(`/tasks/${id}`, data)
+    const res = await handleRequest(() =>
+      API.put(`/tasks/${id}`, data)
+    )
     await fetchTasks()
-    return res.data
+    return res
   }
 
   const deleteTask = async id => {
-    const res = await API.delete(`/tasks/${id}`)
+    const res = await handleRequest(() =>
+      API.delete(`/tasks/${id}`)
+    )
     await fetchTasks()
-    return res.data
+    return res
   }
+
+  
 
   // ================= PROJECTS =================
+  const fetchProjects = () =>
+    handleRequest(() => API.get('/projects'), setProjects)
 
-  const [projects, setProjects] = useState([])
-
-  const fetchProjects = async () => {
-    setLoading(true)
-    try {
-      const res = await API.get('/projects')
-      const data = res.data?.data || res.data || []
-      setProjects(data)
-      return data
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+  const createProject = async data => {
+    const res = await handleRequest(() =>
+      API.post('/projects', data)
+    )
+    await fetchProjects()
+    return res
   }
 
-  const createProject = async projectData => {
-    const res = await API.post('/projects', projectData)
-    await fetchProjects() // refresh list
-    return res.data
-  }
-
-  const getProjectById = async id => {
-    const res = await API.get(`/projects/${id}`)
-    return res.data?.data
-  }
+  const getProjectById = id =>
+    handleRequest(() => API.get(`/projects/${id}`))
 
   const updateProject = async (id, data) => {
-    const res = await API.put(`/projects/${id}`, data)
+    const res = await handleRequest(() =>
+      API.put(`/projects/${id}`, data)
+    )
     await fetchProjects()
-    return res.data
+    return res
   }
 
   const deleteProject = async id => {
-    const res = await API.delete(`/projects/${id}`)
+    const res = await handleRequest(() =>
+      API.delete(`/projects/${id}`)
+    )
     await fetchProjects()
-    return res.data
+    return res
   }
 
   // ================= INIT =================
-
   useEffect(() => {
-    fetchUsers()
-    fetchTasks() // 🔥 IMPORTANT
     loadCurrentUser()
   }, [])
 
-  // ================= EXPORT =================
+
+  // ================= PROFILE =================
+const fetchProfile = () =>
+  handleRequest(() => API.get('/users/me'))
+
+  // ================= MEMO =================
+  const value = useMemo(
+    () => ({
+      users,
+      tasks,
+      projects,
+      currentUser,
+      loading,
+      dataLoading,
+
+      loginUser,
+      logoutUser,
+
+      fetchUsers,
+      createUser,
+      getUserById,
+      updateUser,
+      deleteUser,
+
+      fetchTasks,
+      createTask,
+      getTaskById,
+      updateTask,
+      deleteTask,
+
+      fetchProjects,
+      createProject,
+      getProjectById,
+      updateProject,
+      deleteProject,
+
+
+      fetchProfile,
+
+
+
+    }),
+    [users, tasks, projects, currentUser, loading, dataLoading]
+  )
 
   return (
-    <UserContext.Provider
-      value={{
-        users,
-        tasks,
-        projects, // ✅ ADD
-        currentUser,
-        loading,
-
-        loginUser,
-        logoutUser,
-
-        fetchUsers,
-        createUser,
-        getUserById,
-        updateUser,
-        deleteUser,
-
-        fetchTasks,
-        createTask,
-        getTaskById,
-        updateTask,
-        deleteTask,
-
-        fetchProjects, // ✅ ADD
-        createProject,
-        getProjectById,
-        updateProject,
-        deleteProject
-      }}
-    >
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   )
 }
 
-export const useUser = () => useContext(UserContext)
+// ================= HOOK =================
+export const useUser = () => {
+  const context = useContext(UserContext)
+  if (!context) {
+    throw new Error('useUser must be used within UserProvider')
+  }
+  return context
+}

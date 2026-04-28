@@ -31,6 +31,7 @@ const BaseLayout = ({ role }) => {
           </main>
 
          <Footer /> 
+         
         </div>
       </div>
     </div>

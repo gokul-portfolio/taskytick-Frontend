@@ -9,7 +9,7 @@ const TextArea = ({
   rows = 4,
   placeholder,
   required = false,
-  icon = null, // 🔥 icon support
+  icon = null, //  icon support
 }) => {
   return (
     <Form.Group className="mb-3 main-text-area">

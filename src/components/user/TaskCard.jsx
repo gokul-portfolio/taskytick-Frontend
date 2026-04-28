@@ -12,17 +12,17 @@ const TaskCard = ({
   assignedTo = 'Unassigned',
   role = 'user',
   onStatusChange,
-  onDelete // 🔥 NEW
+  onDelete 
 }) => {
   const [taskStatus, setTaskStatus] = useState(status)
   const [updating, setUpdating] = useState(false)
 
-  // 🔥 sync status
+  //  sync status
   useEffect(() => {
     setTaskStatus(status)
   }, [status])
 
-  // 🔥 UPDATE STATUS
+  // UPDATE STATUS
   const handleStatusChange = async e => {
     if (updating) return
 
@@ -35,14 +35,14 @@ const TaskCard = ({
         await onStatusChange(id, value)
       } catch (err) {
         console.error('Status update failed', err)
-        setTaskStatus(status) // rollback
+        setTaskStatus(status) 
       } finally {
         setUpdating(false)
       }
     }
   }
 
-  // 🔥 DELETE HANDLER
+  // DELETE HANDLER
   const handleDelete = () => {
     if (window.confirm('Are you sure to delete this task?')) {
       onDelete && onDelete(id)
@@ -76,7 +76,7 @@ const TaskCard = ({
             )}
           </select>
 
-          {/* 🔥 DELETE BUTTON */}
+          {/*  DELETE BUTTON */}
           {role === 'admin' && (
             <button
               className='delete-task-icon'

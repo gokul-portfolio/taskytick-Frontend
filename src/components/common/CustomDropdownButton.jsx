@@ -3,7 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 
 const CustomDropdownButton = ({
     label,
-    icon: Icon,     // 🔥 icon as prop
+    icon: Icon,     //  icon as prop
     options = [],
     onSelect,
 }) => {

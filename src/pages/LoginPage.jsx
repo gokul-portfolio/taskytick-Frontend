@@ -1,121 +1,110 @@
-import React, { useState, useEffect } from 'react'
-import { FaEnvelope, FaLock } from 'react-icons/fa'
-import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { useUser } from "../context/UserContext";
 
-const words = ['Smarter', 'Faster', 'Better']
+const words = ["Smarter", "Faster", "Better"];
 
 const LoginPage = () => {
-  // 🔥 Typing animation
-  const [wordIndex, setWordIndex] = useState(0)
-  const [text, setText] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
+  //  Typing animation
+  const [wordIndex, setWordIndex] = useState(0);
+  const [text, setText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // 🔥 Form state
+  //  Form state
   const [form, setForm] = useState({
-    email: '',
-    password: ''
-  })
+    email: "",
+    password: "",
+  });
 
-  // 🔥 UI states
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  //  FIXED
+  const [loading, setLoading] = useState(false); //  IMPORTANT
+  const [error, setError] = useState("");
 
-  // 🔥 Context
-  const { loginUser, user } = useAuth()
-  const navigate = useNavigate()
+  //  Context
+  const { loginUser } = useUser();
 
   // ============================================
-  // 🔥 Typing animation
+  //  Typing animation
   // ============================================
   useEffect(() => {
-    const currentWord = words[wordIndex]
-    const typingSpeed = isDeleting ? 60 : 120
+    const currentWord = words[wordIndex];
+    const typingSpeed = isDeleting ? 60 : 120;
 
     const timer = setTimeout(() => {
       if (!isDeleting) {
-        setText(currentWord.substring(0, text.length + 1))
+        setText(currentWord.substring(0, text.length + 1));
 
         if (text === currentWord) {
-          setTimeout(() => setIsDeleting(true), 1200)
+          setTimeout(() => setIsDeleting(true), 1200);
         }
       } else {
-        setText(currentWord.substring(0, text.length - 1))
+        setText(currentWord.substring(0, text.length - 1));
 
-        if (text === '') {
-          setIsDeleting(false)
-          setWordIndex(prev => (prev + 1) % words.length)
+        if (text === "") {
+          setIsDeleting(false);
+          setWordIndex((prev) => (prev + 1) % words.length);
         }
       }
-    }, typingSpeed)
+    }, typingSpeed);
 
-    return () => clearTimeout(timer)
-  }, [text, isDeleting, wordIndex])
+    return () => clearTimeout(timer);
+  }, [text, isDeleting, wordIndex]);
 
   // ============================================
-  // 🔥 Input change
+  //  Input change
   // ============================================
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   // ============================================
-  // 🔥 LOGIN FUNCTION (FINAL 🔥)
+  //  LOGIN FUNCTION
   // ============================================
-  const handleLogin = async e => {
-    e.preventDefault()
-    setError('')
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
     if (!form.email || !form.password) {
-      setError('Please enter email and password')
-      return
+      setError("Please enter email and password");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
 
-      // 🔥 CALL CONTEXT (NOT API)
-      const data = await loginUser(form)
+      const data = await loginUser(form);
 
-      // 🔥 Redirect
-      if (data.user.role === 'admin') {
-        navigate('/admin')
+      //  redirect
+      if (data.user.role === "admin") {
+        window.location.href = "/#/admin";
       } else {
-        navigate('/user')
+        window.location.href = "/#/user";
       }
+
     } catch (err) {
-      setError(err.message || 'Login failed')
+      setError(err.message || "Login failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // ============================================
-  // 🔥 Auto redirect if already logged in
+  // UI
   // ============================================
-  useEffect(() => {
-    if (user) {
-      if (user.role === 'admin') {
-        navigate('/admin')
-      } else {
-        navigate('/user')
-      }
-    }
-  }, [user, navigate])
-
   return (
-    <div className='login-wrapper'>
-      <div className='login-card'>
-        {/* LEFT */}
-        <div className='login-left'>
-          <div className='login-left-overlay'>
-            <h1 className='login-head'>Create Anywhere.</h1>
+    <div className="login-wrapper">
+      <div className="login-card">
 
-            <h2 className='login-typer'>
-              Edit <span className='type-text'>{text}</span>.
+        {/* LEFT */}
+        <div className="login-left">
+          <div className="login-left-overlay">
+            <h1 className="login-head">Create Anywhere.</h1>
+
+            <h2 className="login-typer">
+              Edit <span className="type-text">{text}</span>.
             </h2>
 
             <p>Your tasks. Your flow.</p>
@@ -123,22 +112,23 @@ const LoginPage = () => {
         </div>
 
         {/* RIGHT */}
-        <div className='login-right'>
-          <h1 className='text-center'>Welcome Back!</h1>
-          <p className='text-center'>Login to continue to Tasktick</p>
+        <div className="login-right">
+          <h1 className="text-center">Welcome Back!</h1>
+          <p className="text-center">Login to continue to Tasktick</p>
 
-          {error && <p className='error-text'>{error}</p>}
+          {error && <p className="error-text">{error}</p>}
 
-          <form className='login-form' onSubmit={handleLogin}>
+          <form className="login-form" onSubmit={handleLogin}>
+
             {/* EMAIL */}
-            <div className='form-group'>
+            <div className="form-group">
               <label>Email</label>
-              <div className='input-wrapper'>
-                <FaEnvelope className='input-icon' />
+              <div className="input-wrapper">
+                <FaEnvelope className="input-icon" />
                 <input
-                  type='email'
-                  name='email'
-                  placeholder='Enter your email'
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
                   value={form.email}
                   onChange={handleChange}
                 />
@@ -146,40 +136,41 @@ const LoginPage = () => {
             </div>
 
             {/* PASSWORD */}
-            <div className='form-group'>
+            <div className="form-group">
               <label>Password</label>
-              <div className='input-wrapper'>
-                <FaLock className='input-icon' />
+              <div className="input-wrapper">
+                <FaLock className="input-icon" />
                 <input
-                  type='password'
-                  name='password'
-                  placeholder='Enter your password'
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
                   value={form.password}
                   onChange={handleChange}
                 />
               </div>
             </div>
 
-            <div className='form-row'>
-              <span className='forgot-password'>Forgot password?</span>
+            <div className="form-row">
+              <span className="forgot-password">Forgot password?</span>
             </div>
 
             {/* BUTTON */}
-            <button type='submit' className='btn-login' disabled={loading}>
-              {loading ? 'Logging in...' : 'Login'}
+            <button type="submit" className="btn-login" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
 
-            <div className='login-footer-note'>
+            <div className="login-footer-note">
               <p>
                 This app is for Tasktick users only. Please log in using your
                 assigned credentials.
               </p>
             </div>
+
           </form>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

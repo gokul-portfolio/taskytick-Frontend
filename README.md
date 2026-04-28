@@ -35,8 +35,8 @@ This project is built for practice and learning full-stack development concepts.
 
 TaskyTick has two main roles:
 
-- 🔹 Admin  
-- 🔹 User  
+-  Admin  
+-  User  
 
 Each role has different access permissions.
 
@@ -82,7 +82,7 @@ Admin has full control over the system.
 - Edit projects  
 - View project details  
 
-### ✅ Task Management
+###  Task Management
 - Create tasks  
 - Assign tasks to users  
 - Edit tasks  

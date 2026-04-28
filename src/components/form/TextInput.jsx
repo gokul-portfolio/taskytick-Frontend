@@ -9,7 +9,7 @@ const TextInput = ({
   placeholder,
   required = false,
   type = "text",
-  icon = null, // 🔥 NEW
+  icon = null, //  NEW
 }) => {
   return (
     <Form.Group className="mb-3 main-text-input">
